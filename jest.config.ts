@@ -1,19 +1,15 @@
-import type { Config } from 'jest'
+module.exports = {
 
-const config: Config = {
-  roots:['<rootDir>/src'],
-  collectCoverage: true,
-  coveragePathIgnorePatterns: ['<rootDir>/coverage', '/node_modules/'],
-  collectCoverageFrom: ['<rootDir>/src/**/**'],
+  roots: ['<rootDir>/src'],
+  collectCoverageFrom: ['<rootDir>/src/**/*.ts', '!<rootDir>/src/main/**'],
   coverageDirectory: 'coverage',
   testEnvironment: 'node',
+  preset: '@shelf/jest-mongodb',
   transform: {
     '^.+\\.ts?$': 'ts-jest'
   },
   coverageProvider: 'babel',
-  preset: '@shelf/jest-mongodb'
-
+  coveragePathIgnorePatterns: ['<rootDir>/coverage', '/node_modules/']
 
 }
 
-export default config
