@@ -5,3 +5,4 @@ jest.config.ts
 jest-integration-config.js
 jest-unit-config.js
 jest-mongodb-config.js
+env.js
