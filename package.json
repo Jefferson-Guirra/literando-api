@@ -14,7 +14,7 @@
     "test:integration": "npm test -- --watch -c jest-integration-config.js",
     "prepare": "husky install"
   },
-  "author": "",
+  "author": "jefferson",
   "license": "ISC",
   "devDependencies": {
     "@shelf/jest-mongodb": "^4.1.7",
