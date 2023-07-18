@@ -7,11 +7,12 @@ import { LoginController } from '../../../../presentation/controllers/account/lo
 import { Controller } from '../../../../presentation/protocols/controller'
 import { LogControllerDecorator } from '../../../decorators/log-controller-decorator'
 import { makeLoginValidator } from './login-validator-factory'
+import env from '../../../config/env'
 
 export const makeLoginController = (): Controller => {
   const validate = makeLoginValidator()
   const bcryptAdapter = new BcrypterAdapter(12)
-  const jwtAdapter = new JwtAdapter(process.env.JWT_SECRET as string)
+  const jwtAdapter = new JwtAdapter(env.jwtSecret)
   const accountMongoRepository = new AccountMongoRepository()
   const authentication = new DbAuthentication(
     accountMongoRepository,
