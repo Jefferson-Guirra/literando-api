@@ -63,3 +63,28 @@ describe('POST /login', () => {
       }).expect(401)
   })
 })
+
+describe('POST /logout', () => {
+  beforeAll(async () => {
+    await MongoHelper.connect(process.env.MONGO_URL as string)
+  })
+  afterAll(async () => {
+    await MongoHelper.disconnect()
+  })
+  beforeEach(async () => {
+    accountCollection = await MongoHelper.getCollection('accounts')
+    await accountCollection?.deleteMany({})
+  })
+
+  test('should return 200 if logout success', async () => {
+    const result = await accountCollection.insertOne({
+      username: 'any_username',
+      email: 'any_email@mail.com',
+      password: 'any_password',
+      accessToken: 'any_token'
+    })
+    await request(app).post('/api/logout').send({ accessToken: 'any_token' }).expect(200)
+    const account = await accountCollection.findOne({ _id: result.insertedId })
+    expect(account?.accessToken).toBeFalsy()
+  })
+})
