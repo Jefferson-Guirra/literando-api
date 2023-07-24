@@ -87,4 +87,7 @@ describe('POST /logout', () => {
     const account = await accountCollection.findOne({ _id: result.insertedId })
     expect(account?.accessToken).toBeFalsy()
   })
+  test('should return 401 if logout fails', async () => {
+    await request(app).post('/api/logout').send({ accessToken: 'any_token' }).expect(401)
+  })
 })
