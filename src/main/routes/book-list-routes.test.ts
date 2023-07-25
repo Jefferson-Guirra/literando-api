@@ -18,6 +18,7 @@ const insertAccountStub = async (): Promise<string> => {
 
 const InsertBookStub = async (userId: string): Promise<void> => {
   await booksCollection.insertOne({
+    userId,
     title: 'any_title',
     description: 'any_description',
     authors: "['any_author']",
@@ -127,12 +128,36 @@ describe('Delete /remove-book', () => {
     await InsertBookStub(accountId)
     let count = await booksCollection.countDocuments()
     expect(count).toBe(1)
-    await request(app).post('/api/remove-book').send({ accessToken: 'any_token', idBook: 'any_id' }).expect(200)
+    await request(app).delete('/api/remove-book').send({ accessToken: 'any_token', idBook: 'any_id' }).expect(200)
     count = await booksCollection.countDocuments()
     expect(count).toBe(0)
   })
 
   test('should return 401 if remove fails', async () => {
-    await request(app).post('/api/remove-book').send({ accessToken: 'any_token', idBook: 'any_id' }).expect(401)
+    await request(app).delete('/api/remove-book').send({ accessToken: 'any_token', idBook: 'any_id' }).expect(401)
+  })
+})
+
+describe('Get /get-books', () => {
+  beforeAll(async () => {
+    await MongoHelper.connect(process.env.MONGO_URL as string)
+  })
+  beforeEach(async () => {
+    booksCollection = await MongoHelper.getCollection('bookList')
+    accountsCollection = await MongoHelper.getCollection('accounts')
+    await accountsCollection.deleteMany({})
+    await booksCollection.deleteMany({})
+  })
+  afterAll(async () => {
+    await MongoHelper.disconnect()
+  })
+
+  test('should return 200 if getBooks success', async () => {
+    const accountId = await insertAccountStub()
+    await InsertBookStub(accountId)
+    await request(app).post('/api/get-books').send({ accessToken: 'any_token' }).expect(200)
+    const promise = await request(app).post('/api/get-books').send({ accessToken: 'any_token' }).expect(200)
+    const response = await promise.body
+    expect(response.body.length).toEqual(1)
   })
 })
