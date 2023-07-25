@@ -119,4 +119,7 @@ describe('Post /get-book', () => {
 
     expect(response).toBeTruthy()
   })
+  test('should return 401 if credentials invalid provided', async () => {
+    await request(app).post('/api/get-book').send({ accessToken: 'any_token', bookId: 'any_id' }).expect(401)
+  })
 })
