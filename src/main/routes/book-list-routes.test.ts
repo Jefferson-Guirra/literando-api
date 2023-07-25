@@ -122,3 +122,28 @@ describe('Post /get-book', () => {
     await request(app).post('/api/get-book').send({ accessToken: 'any_token', bookId: 'any_id' }).expect(401)
   })
 })
+
+describe('Delete /remove-book', () => {
+  beforeAll(async () => {
+    await MongoHelper.connect(process.env.MONGO_URL as string)
+  })
+  beforeEach(async () => {
+    booksCollection = await MongoHelper.getCollection('bookList')
+    accountsCollection = await MongoHelper.getCollection('accounts')
+    await accountsCollection.deleteMany({})
+    await booksCollection.deleteMany({})
+  })
+  afterAll(async () => {
+    await MongoHelper.disconnect()
+  })
+
+  test('should return 200 if success', async () => {
+    const accountId = await insertAccountStub()
+    await InsertBookStub(accountId)
+    let count = await booksCollection.countDocuments()
+    expect(count).toBe(1)
+    await request(app).post('/api/remove-book').send({ accessToken: 'any_token', idBook: 'any_id' }).expect(200)
+    count = await booksCollection.countDocuments()
+    expect(count).toBe(0)
+  })
+})
