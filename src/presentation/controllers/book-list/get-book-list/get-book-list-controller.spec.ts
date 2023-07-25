@@ -1,7 +1,7 @@
 import { AddBookModel } from '../../../../domain/usecases/book-list/add-book-list'
 import { GetBookList } from '../../../../domain/usecases/book-list/get-book-list'
 import { MissingParamError } from '../../../errors/missing-params-error'
-import { badRequest, ok, serverError } from '../../../helpers/http/http'
+import { badRequest, ok, serverError, unauthorized } from '../../../helpers/http/http'
 import { HttpRequest } from '../../../protocols/http'
 import { Validation } from '../../../protocols/validate'
 import { GetBookListController } from './get-book-list-controller'
@@ -46,7 +46,7 @@ const makeGetBookListStub = (): GetBookList => {
     async getBook (
       accessToken: string,
       bookId: string
-    ): Promise<AddBookModel | null> {
+    ): Promise<AddBookModel | null | undefined> {
       return await Promise.resolve(makeFakeAddBookModel())
     }
   }
@@ -107,6 +107,13 @@ describe('GetBookListController', () => {
     const { sut } = makeSut()
     const response = await sut.handle(makeFakeRequest())
     expect(response).toEqual(ok(makeFakeAddBookModel()))
+  })
+
+  test('should return 401 if getBookList return undefined', async () => {
+    const { getBookListStub, sut } = makeSut()
+    jest.spyOn(getBookListStub, 'getBook').mockReturnValueOnce(Promise.resolve(undefined))
+    const response = await sut.handle(makeFakeRequest())
+    expect(response).toEqual(unauthorized())
   })
 })
 
