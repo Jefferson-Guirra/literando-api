@@ -77,7 +77,7 @@ describe('Post /add-book', () => {
       bookId: 'any_id'
     }).expect(400)
   })
-  test('should return 401 if invalid accessToken', async () => {
+  test('should return 401 if add fails', async () => {
     await request(app).post('/api/add-book').send({
       title: 'any_title',
       description: 'any_description',
@@ -145,5 +145,9 @@ describe('Delete /remove-book', () => {
     await request(app).post('/api/remove-book').send({ accessToken: 'any_token', idBook: 'any_id' }).expect(200)
     count = await booksCollection.countDocuments()
     expect(count).toBe(0)
+  })
+
+  test('should return 401 if remove fails', async () => {
+    await request(app).post('/api/remove-book').send({ accessToken: 'any_token', idBook: 'any_id' }).expect(401)
   })
 })
