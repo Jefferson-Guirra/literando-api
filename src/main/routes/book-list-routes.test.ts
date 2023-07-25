@@ -18,9 +18,9 @@ describe('Post /add-book', () => {
   afterAll(async () => {
     await MongoHelper.disconnect()
   })
-  test('should return 200 if sucess', async () => {
+  test('should return 200 if success', async () => {
     await accountsCollection.insertOne({
-      username: 'any_usernamme',
+      username: 'any_username',
       email: 'any_email@mail.com',
       password: 'any_password',
       accessToken: 'any_token'
@@ -38,5 +38,26 @@ describe('Post /add-book', () => {
       accessToken: 'any_token',
       bookId: 'any_id'
     }).expect(200)
+  })
+
+  test('should return 400 if invalid credentials provided', async () => {
+    await accountsCollection.insertOne({
+      username: 'any_username',
+      email: 'any_email@mail.com',
+      password: 'any_password',
+      accessToken: 'any_token'
+    })
+    await request(app).post('/api/add-book').send({
+      description: 'any_description',
+      authors: "['any_author']",
+      price: 0.0,
+      language: 'any_language',
+      publisher: 'any_publisher',
+      publisherDate: 'any_date',
+      imgUrl: 'any_url',
+      pageCount: 1,
+      accessToken: 'any_token',
+      bookId: 'any_id'
+    }).expect(400)
   })
 })
