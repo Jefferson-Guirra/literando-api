@@ -60,4 +60,19 @@ describe('Post /add-book', () => {
       bookId: 'any_id'
     }).expect(400)
   })
+  test('should return 401 if invalid accessToken', async () => {
+    await request(app).post('/api/add-book').send({
+      title: 'any_title',
+      description: 'any_description',
+      authors: "['any_author']",
+      price: 0.0,
+      language: 'any_language',
+      publisher: 'any_publisher',
+      publisherDate: 'any_date',
+      imgUrl: 'any_url',
+      pageCount: 1,
+      accessToken: 'any_token',
+      bookId: 'any_id'
+    }).expect(401)
+  })
 })
