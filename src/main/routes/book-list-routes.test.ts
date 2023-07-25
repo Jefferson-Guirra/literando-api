@@ -160,4 +160,8 @@ describe('Get /get-books', () => {
     const response = await promise.body
     expect(response.body.length).toEqual(1)
   })
+
+  test('should return 401 iff getBooks fails', async () => {
+    await request(app).post('/api/get-books').send({ accessToken: 'any_token' }).expect(401)
+  })
 })
