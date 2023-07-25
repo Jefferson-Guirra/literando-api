@@ -12,10 +12,10 @@ export class DbGetBookList implements GetBookList {
   async getBook (
     accessToken: string,
     bookId: string
-  ): Promise<AddBookModel | null> {
+  ): Promise<AddBookModel | null | undefined> {
     const account = await this.loadAccount.loadByAccessToken(accessToken)
     if (!account) {
-      return null
+      return undefined
     }
 
     const { id } = account
