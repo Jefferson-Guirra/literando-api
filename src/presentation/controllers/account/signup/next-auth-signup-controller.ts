@@ -21,7 +21,7 @@ export class NexAuthSignupController implements Controller {
       if (!account) {
         return unauthorized()
       }
-      return ok('success')
+      return ok(account)
     } catch (err) {
       return serverError(err as Error)
     }
