@@ -1,7 +1,7 @@
 import { NextAuthAccount } from '../../../../domain/models/account/next-auth-account'
 import { AddNextAuthAccount } from '../../../../domain/usecases/account/add-next-auth-account'
 import { MissingParamError } from '../../../errors/missing-params-error'
-import { badRequest, serverError, unauthorized } from '../../../helpers/http/http'
+import { badRequest, ok, serverError, unauthorized } from '../../../helpers/http/http'
 import { HttpRequest } from '../../../protocols/http'
 import { Validation } from '../../../protocols/validate'
 import { NexAuthSignupController } from './next-auth-signup-controller'
@@ -68,22 +68,31 @@ describe('NextAuthLoginController', () => {
     const response = await sut.handle(makeFakeRequest())
     expect(response).toEqual(badRequest(new MissingParamError('any_field')))
   })
+
   test('should call addAccount with correct values', async () => {
     const { addAccountStub, sut } = makeSut()
     const addSpy = jest.spyOn(addAccountStub, 'add')
     await sut.handle(makeFakeRequest())
     expect(addSpy).toHaveBeenCalledWith(makeFakeAddAccount())
   })
+
   test('should return 401 if addAccount return null', async () => {
     const { addAccountStub, sut } = makeSut()
     jest.spyOn(addAccountStub, 'add').mockReturnValueOnce(Promise.resolve(null))
     const response = await sut.handle(makeFakeRequest())
     expect(response).toEqual(unauthorized())
   })
+
   test('should return 500 if addAccount fails', async () => {
     const { addAccountStub, sut } = makeSut()
     jest.spyOn(addAccountStub, 'add').mockReturnValueOnce(Promise.reject(new Error('')))
     const response = await sut.handle(makeFakeRequest())
     expect(response).toEqual(serverError())
+  })
+
+  test('should return 200 on a succeeds', async () => {
+    const { sut } = makeSut()
+    const response = await sut.handle(makeFakeRequest())
+    expect(response).toEqual(ok(makeFakeAddAccount()))
   })
 })
