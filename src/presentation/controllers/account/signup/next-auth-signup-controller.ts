@@ -1,5 +1,5 @@
 import { AddNextAuthAccount } from '../../../../domain/usecases/account/add-next-auth-account'
-import { badRequest, ok } from '../../../helpers/http/http'
+import { badRequest, ok, unauthorized } from '../../../helpers/http/http'
 import { Controller } from '../../../protocols/controller'
 import { HttpRequest, HttpResponse } from '../../../protocols/http'
 import { Validation } from '../../../protocols/validate'
@@ -16,7 +16,10 @@ export class NexAuthSignupController implements Controller {
       return badRequest(error)
     }
     const { username, email, accessToken } = httpRequest.body
-    await this.addAccount.add({ username, email, accessToken })
+    const account = await this.addAccount.add({ username, email, accessToken })
+    if (!account) {
+      return unauthorized()
+    }
     return ok('success')
   }
 }
