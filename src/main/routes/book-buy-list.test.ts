@@ -31,9 +31,8 @@ describe('POST /add-buy-book', () => {
   })
 
   test('should return 200 if add book success', async () => {
-    const userId = await insertAccountStub()
+    await insertAccountStub()
     await request(app).post('/api/add-buy-book').send({
-      userId,
       title: 'any_title',
       description: 'any_description',
       authors: "['any_author']",
@@ -43,9 +42,24 @@ describe('POST /add-buy-book', () => {
       publisherDate: 'any_date',
       imgUrl: 'any_url',
       accessToken: 'any_token',
-      queryDoc: userId + 'any_id',
       pageCount: 1,
       bookId: 'any_id'
     }).expect(200)
+  })
+
+  test('should 401 if add book fails', async () => {
+    await request(app).post('/api/add-buy-book').send({
+      title: 'any_title',
+      description: 'any_description',
+      authors: "['any_author']",
+      language: 'any_language',
+      price: 0.0,
+      publisher: 'any_publisher',
+      publisherDate: 'any_date',
+      imgUrl: 'any_url',
+      accessToken: 'any_token',
+      pageCount: 1,
+      bookId: 'any_id'
+    }).expect(401)
   })
 })
