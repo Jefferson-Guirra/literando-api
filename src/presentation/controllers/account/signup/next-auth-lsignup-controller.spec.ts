@@ -1,6 +1,8 @@
+import { MissingParamError } from '../../../errors/missing-params-error'
+import { badRequest } from '../../../helpers/http/http'
 import { HttpRequest } from '../../../protocols/http'
 import { Validation } from '../../../protocols/validate'
-import { NexAuthLoginController } from './next-auth-login-controller'
+import { NexAuthSignupController } from './next-auth-signup-controller'
 
 const makeFakeRequest = (): HttpRequest => ({
   body: {
@@ -20,12 +22,12 @@ const makeValidatorStub = (): Validation => {
 
 interface SutTypes {
   validatorStub: Validation
-  sut: NexAuthLoginController
+  sut: NexAuthSignupController
 }
 
 const makeSut = (): SutTypes => {
   const validatorStub = makeValidatorStub()
-  const sut = new NexAuthLoginController(validatorStub)
+  const sut = new NexAuthSignupController(validatorStub)
   return {
     validatorStub,
     sut
@@ -38,5 +40,12 @@ describe('NextAuthLoginController', () => {
     const validationSpy = jest.spyOn(validatorStub, 'validation')
     await sut.handle(makeFakeRequest())
     expect(validationSpy).toHaveBeenCalledWith(makeFakeRequest())
+  })
+
+  test('should return 400 if validator return a error', async () => {
+    const { sut, validatorStub } = makeSut()
+    jest.spyOn(validatorStub, 'validation').mockReturnValueOnce(new MissingParamError('any_field'))
+    const response = await sut.handle(makeFakeRequest())
+    expect(response).toEqual(badRequest(new MissingParamError('any_field')))
   })
 })
