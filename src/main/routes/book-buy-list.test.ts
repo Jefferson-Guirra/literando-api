@@ -169,3 +169,26 @@ describe('PUT /update-amount-buy-book', () => {
     await request(app).put('/api/update-amount-buy-book').send({ accessToken: 'any_token', bookId: 'any_id', amount: 200 }).expect(401)
   })
 })
+
+describe('GET /get-buy-books', () => {
+  beforeAll(async () => {
+    await MongoHelper.connect(process.env.MONGO_URL as string)
+  })
+  beforeEach(async () => {
+    accountsCollection = await MongoHelper.getCollection('accounts')
+    buyBooksCollection = await MongoHelper.getCollection('buyBooksList')
+    await accountsCollection.deleteMany({})
+    await buyBooksCollection.deleteMany({})
+  })
+  afterAll(async () => {
+    await MongoHelper.disconnect()
+  })
+  test('should return 200 on succeeds', async () => {
+    const accountId = await insertAccountDatabase()
+    await insertBookDatabase(accountId)
+    await request(app).post('/api/get-buy-books').send({ accessToken: 'any_token' }).expect(200)
+    const promise = await request(app).post('/api/get-buy-books').send({ accessToken: 'any_token' })
+    const response = await promise.body
+    expect(response?.body.length).toBe(1)
+  })
+})
