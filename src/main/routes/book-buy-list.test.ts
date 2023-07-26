@@ -1,4 +1,4 @@
-import { Collection } from 'mongodb'
+import { Collection, ObjectId } from 'mongodb'
 import { MongoHelper } from '../../infra/db/helpers/mongo-helper'
 import request from 'supertest'
 import app from '../config/app'
@@ -16,8 +16,8 @@ const insertAccountDatabase = async (): Promise<string> => {
   return result.insertedId.toString()
 }
 
-const insertBookDatabase = async (userId: string): Promise<void> => {
-  await buyBooksCollection.insertOne({
+const insertBookDatabase = async (userId: string): Promise<ObjectId> => {
+  const result = await buyBooksCollection.insertOne({
     userId,
     title: 'any_title',
     description: 'any_description',
@@ -32,6 +32,7 @@ const insertBookDatabase = async (userId: string): Promise<void> => {
     pageCount: 1,
     bookId: 'any_id'
   })
+  return result.insertedId
 }
 
 describe('POST /add-buy-book', () => {
@@ -132,5 +133,9 @@ describe('DELETE /remove-buy-book', () => {
     const promise = await request(app).delete('/api/remove-buy-book').send({ accessToken: 'any_token', bookId: 'any_id' })
     const response = await promise.body
     expect(response.body).toBeTruthy()
+  })
+
+  test('should return 401 if remove fails', async () => {
+    await request(app).delete('/api/remove-buy-book').send({ accessToken: 'any_token', bookId: 'any_id' }).expect(401)
   })
 })
