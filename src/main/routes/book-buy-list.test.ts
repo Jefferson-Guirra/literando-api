@@ -82,7 +82,7 @@ describe('POST /add-buy-book', () => {
   })
 })
 
-describe('Get /get-buy-book', () => {
+describe('GET /get-buy-book', () => {
   beforeAll(async () => {
     await MongoHelper.connect(process.env.MONGO_URL as string)
   })
@@ -107,5 +107,30 @@ describe('Get /get-buy-book', () => {
 
   test('should return 401 if get book fails', async () => {
     await request(app).post('/api/get-buy-book').send({ accessToken: 'any_token', bookId: 'any_id' }).expect(401)
+  })
+})
+
+describe('DELETE /remove-buy-book', () => {
+  beforeAll(async () => {
+    await MongoHelper.connect(process.env.MONGO_URL as string)
+  })
+  beforeEach(async () => {
+    accountsCollection = await MongoHelper.getCollection('accounts')
+    buyBooksCollection = await MongoHelper.getCollection('buyBooksList')
+    await accountsCollection.deleteMany({})
+    await buyBooksCollection.deleteMany({})
+  })
+  afterAll(async () => {
+    await MongoHelper.disconnect()
+  })
+
+  test('should return 200 if remove book success', async () => {
+    const accountId = await insertAccountDatabase()
+    await insertBookDatabase(accountId)
+    await request(app).delete('/api/remove-buy-book').send({ accessToken: 'any_token', bookId: 'any_id' }).expect(200)
+    await insertBookDatabase(accountId)
+    const promise = await request(app).delete('/api/remove-buy-book').send({ accessToken: 'any_token', bookId: 'any_id' })
+    const response = await promise.body
+    expect(response.body).toBeTruthy()
   })
 })
