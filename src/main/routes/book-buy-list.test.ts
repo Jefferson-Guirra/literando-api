@@ -30,6 +30,7 @@ const insertBookDatabase = async (userId: string): Promise<ObjectId> => {
     accessToken: 'any_token',
     queryDoc: userId + 'any_id',
     pageCount: 1,
+    amount: 1,
     bookId: 'any_id'
   })
   return result.insertedId
@@ -137,5 +138,30 @@ describe('DELETE /remove-buy-book', () => {
 
   test('should return 401 if remove fails', async () => {
     await request(app).delete('/api/remove-buy-book').send({ accessToken: 'any_token', bookId: 'any_id' }).expect(401)
+  })
+})
+
+describe('PUT /update-amount-buy-book', () => {
+  beforeAll(async () => {
+    await MongoHelper.connect(process.env.MONGO_URL as string)
+  })
+  beforeEach(async () => {
+    accountsCollection = await MongoHelper.getCollection('accounts')
+    buyBooksCollection = await MongoHelper.getCollection('buyBooksList')
+    await accountsCollection.deleteMany({})
+    await buyBooksCollection.deleteMany({})
+  })
+  afterAll(async () => {
+    await MongoHelper.disconnect()
+  })
+
+  test('should return 200 if update success', async () => {
+    const accountId = await insertAccountDatabase()
+    const bookId = await insertBookDatabase(accountId)
+    let book = await buyBooksCollection.findOne({ _id: bookId })
+    expect(book?.amount).toBe(1)
+    await request(app).put('/api/update-amount-buy-book').send({ accessToken: 'any_token', bookId: 'any_id', amount: 2 }).expect(200)
+    book = await buyBooksCollection.findOne({ _id: bookId })
+    expect(book?.amount).toBe(2)
   })
 })
