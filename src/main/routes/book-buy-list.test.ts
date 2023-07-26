@@ -164,4 +164,8 @@ describe('PUT /update-amount-buy-book', () => {
     book = await buyBooksCollection.findOne({ _id: bookId })
     expect(book?.amount).toBe(2)
   })
+
+  test('should return 401 if update fails', async () => {
+    await request(app).put('/api/update-amount-buy-book').send({ accessToken: 'any_token', bookId: 'any_id', amount: 200 }).expect(401)
+  })
 })
