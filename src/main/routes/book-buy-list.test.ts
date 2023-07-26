@@ -191,4 +191,8 @@ describe('GET /get-buy-books', () => {
     const response = await promise.body
     expect(response?.body.length).toBe(1)
   })
+
+  test('should return 401 if get books fails', async () => {
+    await request(app).post('/api/get-buy-books').send({ accessToken: 'any_token' }).expect(401)
+  })
 })
