@@ -128,7 +128,7 @@ describe('DbNextAuthAddAccount', () => {
     const { sut, addAccountRepositoryStub } = makeSut()
     const addSpy = jest.spyOn(addAccountRepositoryStub, 'addNextAuthAccount')
     await sut.add(makeFakeRequest())
-    expect(addSpy).toHaveBeenCalledWith({ ...makeFakeRequest(), password: 'any_password' })
+    expect(addSpy).toHaveBeenCalledWith({ ...makeFakeRequest(), password: 'hashed_password' })
   })
 
   test('should return throw if addAccount fails', async () => {
