@@ -20,8 +20,8 @@ export class DbNextAuthAddAccount implements AddNextAuthAccount {
     }
 
     const password = this.randomPassword.generate()
-    await this.Hasher.hash(password)
-    await this.addAccount.addNextAuthAccount({ ...accountModel, password })
+    const hashedPassword = await this.Hasher.hash(password)
+    await this.addAccount.addNextAuthAccount({ ...accountModel, password: hashedPassword })
     return {
       email: 'any_mail@email.com',
       accessToken: 'any_token',
