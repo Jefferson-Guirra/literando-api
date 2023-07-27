@@ -14,7 +14,7 @@ const insertAccountDatabase = async (): Promise<void> => {
 
   })
 }
-describe('Post /signup', () => {
+describe('POST /signup', () => {
   beforeAll(async () => {
     await MongoHelper.connect(process.env.MONGO_URL as string)
   })
@@ -42,6 +42,40 @@ describe('Post /signup', () => {
       password: 'any_password',
       passwordConfirmation: 'any_password'
     }).expect(401)
+  })
+})
+
+describe('POST /next-auth-signup', () => {
+  beforeAll(async () => {
+    await MongoHelper.connect(process.env.MONGO_URL as string)
+  })
+  afterAll(async () => {
+    await MongoHelper.disconnect()
+  })
+  beforeEach(async () => {
+    accountCollection = await MongoHelper.getCollection('accounts')
+    await accountCollection?.deleteMany({})
+  })
+
+  test('should return 200 on success', async () => {
+    await request(app).post('/api/next-auth-signup').send({
+      username: 'any_username',
+      email: 'any_email@mail.com',
+      accessToken: 'any_token'
+    }).expect(200)
+    const promise = await request(app).post('/api/next-auth-signup').send({
+      username: 'jefferson',
+      email: 'jeffersontest_jest@gmail.com',
+      accessToken: 'any_token'
+    })
+    const response = promise.body
+    expect(response).toBeTruthy()
+    expect(response.body.username).toBe('jefferson')
+    expect(response.body.email).toBe('jeffersontest_jest@gmail.com')
+    expect(response.body.accessToken).toBeTruthy()
+    expect(response.body.password).toBeTruthy()
+    expect(response.body.accessToken).toBeTruthy()
+    expect(response.body.id).toBeTruthy()
   })
 })
 
