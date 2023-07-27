@@ -1,8 +1,16 @@
-import { NextAuthAccount } from '../../../../domain/models/account/next-auth-account'
+import { AddNextAuthAccountModel } from '../../../../domain/usecases/account/add-next-auth-account'
 import { LoadAccountByAccessTokenRepository, accountLoginModel } from '../../../protocols/db/account/load-account-by-access-token-repository'
 import { DbNextAuthAddAccount } from './db-add-next-auth-account'
 
-const makeFakeRequest = (): NextAuthAccount => ({
+const makeFakeAccount = (): accountLoginModel => ({
+  email: 'any_mail@email.com',
+  accessToken: 'any_token',
+  password: 'hashed_password',
+  username: 'any_name',
+  id: 'any_id'
+})
+
+const makeFakeRequest = (): AddNextAuthAccountModel => ({
   email: 'any_mail@email.com',
   accessToken: 'any_token',
   username: 'any_name'
@@ -38,5 +46,11 @@ describe('DbNextAuthAddAccount', () => {
     const loadSpy = jest.spyOn(loadAccountStub, 'loadByAccessToken')
     await sut.add(makeFakeRequest())
     expect(loadSpy).toHaveBeenCalledWith('any_token')
+  })
+  test('should return null if account exist', async () => {
+    const { sut, loadAccountStub } = makeSut()
+    jest.spyOn(loadAccountStub, 'loadByAccessToken').mockReturnValueOnce(Promise.resolve(makeFakeAccount()))
+    const response = await sut.add(makeFakeRequest())
+    expect(response).toBeFalsy()
   })
 })
