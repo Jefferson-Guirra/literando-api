@@ -10,11 +10,14 @@ import {
   accountLoginModel
 } from '../../../data/protocols/db/account/load-account-by-access-token-repository'
 import { RemoveAccessTokenRepository } from '../../../data/protocols/db/account/remove-access-token-repository'
+import { AddNextAuthAccountRepository, AddNextAuthAccountRepositoryModel } from '../../../data/protocols/db/account/add-next-auth-account-repository'
+import { NextAuthAccount } from '../../../domain/models/account/next-auth-account'
 
 export class AccountMongoRepository
 implements
     LoadAccountByEmailRepository,
     AddAccountRepository,
+    AddNextAuthAccountRepository,
     UpdateAccessTokenRepository,
     LoadAccountByAccessTokenRepository,
     RemoveAccessTokenRepository {
@@ -65,5 +68,12 @@ implements
         }
       }
     )
+  }
+
+  async addNextAuthAccount (account: AddNextAuthAccountRepositoryModel): Promise<NextAuthAccount | null> {
+    const accountsCollection = await MongoHelper.getCollection('accounts')
+    const result = await accountsCollection.insertOne(account)
+    const newAccount = await accountsCollection.findOne({ _id: result.insertedId })
+    return newAccount && MongoHelper.Map(newAccount)
   }
 }
