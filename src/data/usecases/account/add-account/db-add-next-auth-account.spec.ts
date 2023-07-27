@@ -1,6 +1,7 @@
 import { AccountModel } from '../../../../domain/models/account/account'
 import { NextAuthAccount } from '../../../../domain/models/account/next-auth-account'
 import { AddNextAuthAccountModel } from '../../../../domain/usecases/account/add-next-auth-account'
+import { Hasher } from '../../../protocols/criptography/hasher'
 import { AddNextAuthAccountRepository } from '../../../protocols/db/account/add-next-auth-account-repository'
 import { LoadAccountByEmailRepository } from '../../../protocols/db/account/load-account-by-email-repository'
 import { GenerateRandomPassword } from '../../../protocols/factories/generate-random-password'
@@ -38,10 +39,20 @@ const makeAddAccountStub = (): AddNextAuthAccountRepository => {
   return new AddAccountRepositoryStub()
 }
 
+const makeHasherStub = (): Hasher => {
+  class HasherStub implements Hasher {
+    async hash (value: string): Promise<string> {
+      return await Promise.resolve('hashed_password')
+    }
+  }
+  return new HasherStub()
+}
+
 interface SutTypes {
   loadAccountStub: LoadAccountByEmailRepository
   addAccountRepositoryStub: AddNextAuthAccountRepository
   generatePasswordStub: GenerateRandomPassword
+  hasherStub: Hasher
   sut: DbNextAuthAddAccount
 }
 
@@ -58,12 +69,14 @@ const makeSut = (): SutTypes => {
   const loadAccountStub = makeLoadAccountRepositoryStub()
   const addAccountRepositoryStub = makeAddAccountStub()
   const generatePasswordStub = makeGeneratePassword()
-  const sut = new DbNextAuthAddAccount(loadAccountStub, addAccountRepositoryStub, generatePasswordStub)
+  const hasherStub = makeHasherStub()
+  const sut = new DbNextAuthAddAccount(loadAccountStub, addAccountRepositoryStub, generatePasswordStub, hasherStub)
 
   return {
     generatePasswordStub,
     loadAccountStub,
     addAccountRepositoryStub,
+    hasherStub,
     sut
   }
 }
@@ -97,6 +110,12 @@ describe('DbNextAuthAddAccount', () => {
     await expect(promise).rejects.toThrow()
   })
 
+  test('should call hasher with correct values', async () => {
+    const { sut, hasherStub } = makeSut()
+    const hashSpy = jest.spyOn(hasherStub, 'hash')
+    await sut.add(makeFakeRequest())
+    expect(hashSpy).toHaveBeenCalledWith('any_password')
+  })
   test('should call addAccount with correct values)', async () => {
     const { sut, addAccountRepositoryStub } = makeSut()
     const addSpy = jest.spyOn(addAccountRepositoryStub, 'addNextAuthAccount')
