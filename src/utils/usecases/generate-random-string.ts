@@ -10,7 +10,7 @@ export class GenerateRandomString implements GenerateRandomPassword {
       lowercase: true,
       length: 7,
       numbers: true,
-      symbols: true,
+      symbols: false,
       uppercase: true
     })
 

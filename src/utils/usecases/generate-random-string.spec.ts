@@ -15,7 +15,7 @@ describe('GenerateRandomString', () => {
       lowercase: true,
       length: 7,
       numbers: true,
-      symbols: true,
+      symbols: false,
       uppercase: true
     })
   })
