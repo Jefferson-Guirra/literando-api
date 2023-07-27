@@ -51,6 +51,21 @@ describe('AccountMongoRepository', () => {
     expect(account.email).toBe('any_email@mail.com')
   })
 
+  test('should return account if addNextAuthAccount success', async () => {
+    const sut = makeSut()
+    const account = await sut.addNextAuthAccount({
+      username: 'any_username',
+      email: 'any_email@mail.com',
+      password: 'any_password',
+      accessToken: 'any_token'
+    })
+    expect(account).toBeTruthy()
+    expect(account?.username).toBe('any_username')
+    expect(account?.email).toBe('any_email@mail.com')
+    expect(account?.password).toBe('any_password')
+    expect(account?.accessToken).toBe('any_token')
+  })
+
   test('should update the account accessToken on updateAccessToken success', async () => {
     const sut = makeSut()
     const result = await accountCollection.insertOne({
