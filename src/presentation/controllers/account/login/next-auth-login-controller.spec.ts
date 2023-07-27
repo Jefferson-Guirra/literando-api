@@ -1,3 +1,4 @@
+import { NextAuth, NextAuthAuthentication, nextAuthAuthenticationModel } from '../../../../domain/usecases/account/next-auth-authentication'
 import { MissingParamError } from '../../../errors/missing-params-error'
 import { badRequest } from '../../../helpers/http/http'
 import { HttpRequest } from '../../../protocols/http'
@@ -8,7 +9,8 @@ const makeFakeRequest = (): HttpRequest => ({
   body: {
     routeName: 'any_name',
     privateKey: 'any_key',
-    email: 'any_email@mail.com'
+    email: 'any_email@mail.com',
+    accessToken: 'any_token'
   }
 })
 
@@ -20,15 +22,27 @@ const makeValidatorStub = (): Validation => {
   }
   return new ValidatorStub()
 }
+
+const makeAuthenticationStub = (): NextAuthAuthentication => {
+  class NextAuthAuthenticationStub implements NextAuthAuthentication {
+    async auth (data: nextAuthAuthenticationModel): Promise<NextAuth | null | undefined> {
+      return await Promise.resolve({ accessToken: 'any_token', username: 'any_username' })
+    }
+  }
+  return new NextAuthAuthenticationStub()
+}
 interface SutTypes {
   validatorStub: Validation
+  authenticationStub: NextAuthAuthentication
   sut: NextAuthLoginController
 }
 
 const makeSut = (): SutTypes => {
+  const authenticationStub = makeAuthenticationStub()
   const validatorStub = makeValidatorStub()
-  const sut = new NextAuthLoginController(validatorStub)
+  const sut = new NextAuthLoginController(validatorStub, authenticationStub)
   return {
+    authenticationStub,
     validatorStub,
     sut
   }
@@ -47,5 +61,12 @@ describe('NextAuthLoginController', () => {
     jest.spyOn(validatorStub, 'validation').mockReturnValueOnce(new MissingParamError('any_field'))
     const response = await sut.handle(makeFakeRequest())
     expect(response).toEqual(badRequest(new MissingParamError('any_field')))
+  })
+
+  test('should call authentication with correct values', async () => {
+    const { sut, authenticationStub } = makeSut()
+    const authSpy = jest.spyOn(authenticationStub, 'auth')
+    await sut.handle(makeFakeRequest())
+    expect(authSpy).toHaveBeenCalledWith(makeFakeRequest().body)
   })
 })
