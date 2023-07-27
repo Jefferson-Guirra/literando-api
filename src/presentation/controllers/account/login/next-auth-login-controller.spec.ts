@@ -1,6 +1,6 @@
 import { NextAuth, NextAuthAuthentication, nextAuthAuthenticationModel } from '../../../../domain/usecases/account/next-auth-authentication'
 import { MissingParamError } from '../../../errors/missing-params-error'
-import { badRequest } from '../../../helpers/http/http'
+import { badRequest, unauthorized } from '../../../helpers/http/http'
 import { HttpRequest } from '../../../protocols/http'
 import { Validation } from '../../../protocols/validate'
 import { NextAuthLoginController } from './next-auth-login-controller'
@@ -68,5 +68,12 @@ describe('NextAuthLoginController', () => {
     const authSpy = jest.spyOn(authenticationStub, 'auth')
     await sut.handle(makeFakeRequest())
     expect(authSpy).toHaveBeenCalledWith(makeFakeRequest().body)
+  })
+
+  test('should return 401 if authentication fails', async () => {
+    const { sut, authenticationStub } = makeSut()
+    jest.spyOn(authenticationStub, 'auth').mockReturnValueOnce(Promise.resolve(undefined))
+    const response = await sut.handle(makeFakeRequest())
+    expect(response).toEqual(unauthorized())
   })
 })
