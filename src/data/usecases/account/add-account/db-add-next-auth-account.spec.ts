@@ -2,7 +2,7 @@ import { AccountModel } from '../../../../domain/models/account/account'
 import { NextAuthAccount } from '../../../../domain/models/account/next-auth-account'
 import { AddNextAuthAccountModel } from '../../../../domain/usecases/account/add-next-auth-account'
 import { Hasher } from '../../../protocols/criptography/hasher'
-import { AddNextAuthAccountRepository } from '../../../protocols/db/account/add-next-auth-account-repository'
+import { AddNextAuthAccountRepository, AddNextAuthAccountRepositoryModel } from '../../../protocols/db/account/add-next-auth-account-repository'
 import { LoadAccountByEmailRepository } from '../../../protocols/db/account/load-account-by-email-repository'
 import { GenerateRandomPassword } from '../../../../utils/protocols/generate-random-password'
 import { DbNextAuthAddAccount } from './db-add-next-auth-account'
@@ -32,7 +32,7 @@ const makeLoadAccountRepositoryStub = (): LoadAccountByEmailRepository => {
 
 const makeAddAccountStub = (): AddNextAuthAccountRepository => {
   class AddAccountRepositoryStub implements AddNextAuthAccountRepository {
-    async addNextAuthAccount (account: AddNextAuthAccountModel): Promise<NextAuthAccount | null> {
+    async addNextAuthAccount (account: AddNextAuthAccountRepositoryModel): Promise<NextAuthAccount | null> {
       return await Promise.resolve({ ...makeFakeAccount(), password: 'hashed_password' })
     }
   }
