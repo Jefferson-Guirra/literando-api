@@ -1,23 +1,27 @@
 import { NextAuthAccount } from '../../../../domain/models/account/next-auth-account'
-import { AddNextAuthAccount } from '../../../../domain/usecases/account/add-next-auth-account'
+import { AddNextAuthAccount, AddNextAuthAccountModel } from '../../../../domain/usecases/account/add-next-auth-account'
 import { MissingParamError } from '../../../errors/missing-params-error'
 import { badRequest, ok, serverError, unauthorized } from '../../../helpers/http/http'
 import { HttpRequest } from '../../../protocols/http'
 import { Validation } from '../../../protocols/validate'
 import { NexAuthSignupController } from './next-auth-signup-controller'
 
-const makeFakeAddAccount = (): NextAuthAccount => ({
+const makeFakeAccountModel = (): NextAuthAccount => ({
+  username: 'any_username',
+  email: 'any_email@mail.com',
+  password: 'any_password',
+  id: 'any_id',
+  accessToken: 'any_token'
+})
+
+const makeFakeAddAccount = (): AddNextAuthAccountModel => ({
   username: 'any_username',
   email: 'any_email@mail.com',
   accessToken: 'any_token'
 })
 
 const makeFakeRequest = (): HttpRequest => ({
-  body: {
-    username: 'any_username',
-    email: 'any_email@mail.com',
-    accessToken: 'any_token'
-  }
+  body: makeFakeAddAccount()
 })
 const makeValidatorStub = (): Validation => {
   class ValidatorStub implements Validation {
@@ -30,8 +34,8 @@ const makeValidatorStub = (): Validation => {
 
 const makeAddAccountStub = (): AddNextAuthAccount => {
   class AddNextAuthAccountStub implements AddNextAuthAccount {
-    async add (accountModel: NextAuthAccount): Promise<NextAuthAccount | null> {
-      return await Promise.resolve(makeFakeAddAccount())
+    async add (accountModel: AddNextAuthAccountModel): Promise<NextAuthAccount | null> {
+      return await Promise.resolve(makeFakeAccountModel())
     }
   }
   return new AddNextAuthAccountStub()
@@ -93,6 +97,6 @@ describe('NextAuthLoginController', () => {
   test('should return 200 on a succeeds', async () => {
     const { sut } = makeSut()
     const response = await sut.handle(makeFakeRequest())
-    expect(response).toEqual(ok(makeFakeAddAccount()))
+    expect(response).toEqual(ok(makeFakeAccountModel()))
   })
 })
