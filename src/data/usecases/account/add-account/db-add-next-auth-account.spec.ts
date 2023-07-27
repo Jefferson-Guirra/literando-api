@@ -1,10 +1,11 @@
 import { AccountModel } from '../../../../domain/models/account/account'
+import { NextAuthAccount } from '../../../../domain/models/account/next-auth-account'
 import { AddNextAuthAccountModel } from '../../../../domain/usecases/account/add-next-auth-account'
-import { accountLoginModel } from '../../../protocols/db/account/load-account-by-access-token-repository'
+import { AddNextAuthAccountRepository } from '../../../protocols/db/account/add-next-auth-account-repository'
 import { LoadAccountByEmailRepository } from '../../../protocols/db/account/load-account-by-email-repository'
 import { DbNextAuthAddAccount } from './db-add-next-auth-account'
 
-const makeFakeAccount = (): accountLoginModel => ({
+const makeFakeAccount = (): NextAuthAccount => ({
   email: 'any_email@mail.com',
   accessToken: 'any_token',
   password: 'hashed_password',
@@ -27,17 +28,29 @@ const makeLoadAccountRepositoryStub = (): LoadAccountByEmailRepository => {
   return new LoadAccountByEmailRepositoryStub()
 }
 
+const makeAddAccountStub = (): AddNextAuthAccountRepository => {
+  class AddAccountRepositoryStub implements AddNextAuthAccountRepository {
+    async addNextAuthAccount (account: AddNextAuthAccountModel): Promise<NextAuthAccount | null> {
+      return await Promise.resolve(makeFakeAccount())
+    }
+  }
+  return new AddAccountRepositoryStub()
+}
+
 interface SutTypes {
   loadAccountStub: LoadAccountByEmailRepository
+  addAccountRepositoryStub: AddNextAuthAccountRepository
   sut: DbNextAuthAddAccount
 }
 
 const makeSut = (): SutTypes => {
   const loadAccountStub = makeLoadAccountRepositoryStub()
-  const sut = new DbNextAuthAddAccount(loadAccountStub)
+  const addAccountRepositoryStub = makeAddAccountStub()
+  const sut = new DbNextAuthAddAccount(loadAccountStub, addAccountRepositoryStub)
 
   return {
     loadAccountStub,
+    addAccountRepositoryStub,
     sut
   }
 }
@@ -62,5 +75,12 @@ describe('DbNextAuthAddAccount', () => {
     jest.spyOn(loadAccountStub, 'loadByEmail').mockReturnValueOnce(Promise.reject(new Error('')))
     const promise = sut.add(makeFakeRequest())
     await expect(promise).rejects.toThrow()
+  })
+
+  test('should call addAccount with correct values)', async () => {
+    const { sut, addAccountRepositoryStub } = makeSut()
+    const addSpy = jest.spyOn(addAccountRepositoryStub, 'addNextAuthAccount')
+    await sut.add(makeFakeRequest())
+    expect(addSpy).toHaveBeenCalledWith(makeFakeRequest())
   })
 })
