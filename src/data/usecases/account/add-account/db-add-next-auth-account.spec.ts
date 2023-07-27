@@ -90,6 +90,13 @@ describe('DbNextAuthAddAccount', () => {
     await expect(promise).rejects.toThrow()
   })
 
+  test('should return throw if generate password fails', async () => {
+    const { sut, generatePasswordStub } = makeSut()
+    jest.spyOn(generatePasswordStub, 'generate').mockImplementationOnce(() => { throw new Error('') })
+    const promise = sut.add(makeFakeRequest())
+    await expect(promise).rejects.toThrow()
+  })
+
   test('should call addAccount with correct values)', async () => {
     const { sut, addAccountRepositoryStub } = makeSut()
     const addSpy = jest.spyOn(addAccountRepositoryStub, 'addNextAuthAccount')
