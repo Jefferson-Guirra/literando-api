@@ -10,7 +10,7 @@ import { DbNextAuthAddAccount } from './db-add-next-auth-account'
 const makeFakeAccount = (): NextAuthAccount => ({
   email: 'any_email@mail.com',
   accessToken: 'any_token',
-  password: 'hashed_password',
+  password: 'any_password',
   username: 'any_name',
   id: 'any_id'
 })
@@ -33,7 +33,7 @@ const makeLoadAccountRepositoryStub = (): LoadAccountByEmailRepository => {
 const makeAddAccountStub = (): AddNextAuthAccountRepository => {
   class AddAccountRepositoryStub implements AddNextAuthAccountRepository {
     async addNextAuthAccount (account: AddNextAuthAccountModel): Promise<NextAuthAccount | null> {
-      return await Promise.resolve(makeFakeAccount())
+      return await Promise.resolve({ ...makeFakeAccount(), password: 'hashed_password' })
     }
   }
   return new AddAccountRepositoryStub()
@@ -136,5 +136,11 @@ describe('DbNextAuthAddAccount', () => {
     jest.spyOn(addAccountRepositoryStub, 'addNextAuthAccount').mockReturnValueOnce(Promise.reject(new Error('')))
     const promise = sut.add(makeFakeRequest())
     await expect(promise).rejects.toThrow()
+  })
+
+  test('should return account on succeeds', async () => {
+    const { sut } = makeSut()
+    const response = await sut.add(makeFakeRequest())
+    expect(response).toEqual({ ...makeFakeAccount(), password: 'hashed_password' })
   })
 })
