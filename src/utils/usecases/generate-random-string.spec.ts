@@ -4,6 +4,22 @@ import generator from 'generate-password'
 const makeSut = (): GenerateRandomString => new GenerateRandomString()
 
 describe('GenerateRandomString', () => {
+  test('should call generator with correct value', () => {
+    const sut = makeSut()
+    const generatorSpy = jest.spyOn(generator, 'generate')
+    sut.generate()
+    expect(generatorSpy).toHaveBeenCalledWith({
+      exclude: '',
+      excludeSimilarCharacters: false,
+      strict: false,
+      lowercase: true,
+      length: 7,
+      numbers: true,
+      symbols: true,
+      uppercase: true
+    })
+  })
+
   test('should return random password if success', () => {
     const sut = makeSut()
     jest.spyOn(generator, 'generate').mockReturnValueOnce('1234567')
