@@ -116,6 +116,14 @@ describe('DbNextAuthAddAccount', () => {
     await sut.add(makeFakeRequest())
     expect(hashSpy).toHaveBeenCalledWith('any_password')
   })
+
+  test('should return throw if hasher fails', async () => {
+    const { sut, hasherStub } = makeSut()
+    jest.spyOn(hasherStub, 'hash').mockReturnValueOnce(Promise.reject(new Error('')))
+    const promise = sut.add(makeFakeRequest())
+    await expect(promise).rejects.toThrow()
+  })
+
   test('should call addAccount with correct values)', async () => {
     const { sut, addAccountRepositoryStub } = makeSut()
     const addSpy = jest.spyOn(addAccountRepositoryStub, 'addNextAuthAccount')
