@@ -5,8 +5,16 @@ import { Collection } from 'mongodb'
 import { hash } from 'bcrypt'
 
 let accountCollection: Collection
+const insertAccountDatabase = async (): Promise<void> => {
+  await accountCollection.insertOne({
+    username: 'any_username',
+    email: 'any_email@mail.com',
+    password: 'any_password',
+    accessToken: 'any_token'
 
-describe('Post/ Login', () => {
+  })
+}
+describe('Post /signup', () => {
   beforeAll(async () => {
     await MongoHelper.connect(process.env.MONGO_URL as string)
   })
@@ -24,6 +32,16 @@ describe('Post/ Login', () => {
       password: '123456',
       passwordConfirmation: '123456'
     }).expect(200)
+  })
+
+  test('should return 401 if add account fails', async () => {
+    await insertAccountDatabase()
+    await request(app).post('/api/signup').send({
+      username: 'any_username',
+      email: 'any_email@mail.com',
+      password: 'any_password',
+      passwordConfirmation: 'any_password'
+    }).expect(401)
   })
 })
 
