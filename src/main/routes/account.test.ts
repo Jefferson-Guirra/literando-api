@@ -77,6 +77,15 @@ describe('POST /next-auth-signup', () => {
     expect(response.body.accessToken).toBeTruthy()
     expect(response.body.id).toBeTruthy()
   })
+
+  test('should return 401 if add account fails', async () => {
+    await insertAccountDatabase()
+    await request(app).post('/api/next-auth-signup').send({
+      username: 'any_username',
+      email: 'any_email@mail.com',
+      accessToken: 'any_token'
+    }).expect(401)
+  })
 })
 
 describe('POST /login', () => {
