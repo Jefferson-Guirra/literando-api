@@ -3,7 +3,7 @@ import { AddNextAuthAccount, AddNextAuthAccountModel } from '../../../../domain/
 import { Hasher } from '../../../protocols/criptography/hasher'
 import { AddNextAuthAccountRepository } from '../../../protocols/db/account/add-next-auth-account-repository'
 import { LoadAccountByEmailRepository } from '../../../protocols/db/account/load-account-by-email-repository'
-import { GenerateRandomPassword } from '../../../protocols/factories/generate-random-password'
+import { GenerateRandomPassword } from '../../../../utils/protocols/generate-random-password'
 
 export class DbNextAuthAddAccount implements AddNextAuthAccount {
   constructor (
