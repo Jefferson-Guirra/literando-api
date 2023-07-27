@@ -83,4 +83,11 @@ describe('DbNextAuthAddAccount', () => {
     await sut.add(makeFakeRequest())
     expect(addSpy).toHaveBeenCalledWith(makeFakeRequest())
   })
+
+  test('should return throw if addAccount fails', async () => {
+    const { sut, addAccountRepositoryStub } = makeSut()
+    jest.spyOn(addAccountRepositoryStub, 'addNextAuthAccount').mockReturnValueOnce(Promise.reject(new Error('')))
+    const promise = sut.add(makeFakeRequest())
+    await expect(promise).rejects.toThrow()
+  })
 })
