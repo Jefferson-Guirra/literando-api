@@ -31,7 +31,7 @@ describe('GenerateRandomString', () => {
 
   test('should return throw if generate fails', () => {
     const sut = makeSut()
-    jest.spyOn(sut, 'generate').mockImplementationOnce(() => { throw new Error('') })
+    jest.spyOn(generator, 'generate').mockImplementationOnce(() => { throw new Error('') })
     expect(sut.generate).toThrow(new Error(''))
   })
 })
