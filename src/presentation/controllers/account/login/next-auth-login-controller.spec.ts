@@ -1,6 +1,6 @@
 import { NextAuth, NextAuthAuthentication, nextAuthAuthenticationModel } from '../../../../domain/usecases/account/next-auth-authentication'
 import { MissingParamError } from '../../../errors/missing-params-error'
-import { badRequest, unauthorized } from '../../../helpers/http/http'
+import { badRequest, serverError, unauthorized } from '../../../helpers/http/http'
 import { HttpRequest } from '../../../protocols/http'
 import { Validation } from '../../../protocols/validate'
 import { NextAuthLoginController } from './next-auth-login-controller'
@@ -75,5 +75,12 @@ describe('NextAuthLoginController', () => {
     jest.spyOn(authenticationStub, 'auth').mockReturnValueOnce(Promise.resolve(undefined))
     const response = await sut.handle(makeFakeRequest())
     expect(response).toEqual(unauthorized())
+  })
+
+  test('should return 500 if authentication return throw', async () => {
+    const { sut, authenticationStub } = makeSut()
+    jest.spyOn(authenticationStub, 'auth').mockReturnValueOnce(Promise.reject(new Error('')))
+    const response = await sut.handle(makeFakeRequest())
+    expect(response).toEqual(serverError(new Error('')))
   })
 })
