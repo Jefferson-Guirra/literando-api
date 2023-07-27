@@ -3,6 +3,7 @@ import { NextAuthAccount } from '../../../../domain/models/account/next-auth-acc
 import { AddNextAuthAccountModel } from '../../../../domain/usecases/account/add-next-auth-account'
 import { AddNextAuthAccountRepository } from '../../../protocols/db/account/add-next-auth-account-repository'
 import { LoadAccountByEmailRepository } from '../../../protocols/db/account/load-account-by-email-repository'
+import { GenerateRandomPassword } from '../../../protocols/factories/generate-random-password'
 import { DbNextAuthAddAccount } from './db-add-next-auth-account'
 
 const makeFakeAccount = (): NextAuthAccount => ({
@@ -40,15 +41,27 @@ const makeAddAccountStub = (): AddNextAuthAccountRepository => {
 interface SutTypes {
   loadAccountStub: LoadAccountByEmailRepository
   addAccountRepositoryStub: AddNextAuthAccountRepository
+  generatePasswordStub: GenerateRandomPassword
   sut: DbNextAuthAddAccount
+}
+
+const makeGeneratePassword = (): GenerateRandomPassword => {
+  class GeneratePasswordStub implements GenerateRandomPassword {
+    generate (): string {
+      return 'any_password'
+    }
+  }
+  return new GeneratePasswordStub()
 }
 
 const makeSut = (): SutTypes => {
   const loadAccountStub = makeLoadAccountRepositoryStub()
   const addAccountRepositoryStub = makeAddAccountStub()
-  const sut = new DbNextAuthAddAccount(loadAccountStub, addAccountRepositoryStub)
+  const generatePasswordStub = makeGeneratePassword()
+  const sut = new DbNextAuthAddAccount(loadAccountStub, addAccountRepositoryStub, generatePasswordStub)
 
   return {
+    generatePasswordStub,
     loadAccountStub,
     addAccountRepositoryStub,
     sut
@@ -81,7 +94,7 @@ describe('DbNextAuthAddAccount', () => {
     const { sut, addAccountRepositoryStub } = makeSut()
     const addSpy = jest.spyOn(addAccountRepositoryStub, 'addNextAuthAccount')
     await sut.add(makeFakeRequest())
-    expect(addSpy).toHaveBeenCalledWith(makeFakeRequest())
+    expect(addSpy).toHaveBeenCalledWith({ ...makeFakeRequest(), password: 'any_password' })
   })
 
   test('should return throw if addAccount fails', async () => {

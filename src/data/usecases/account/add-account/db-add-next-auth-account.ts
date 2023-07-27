@@ -2,11 +2,13 @@ import { NextAuthAccount } from '../../../../domain/models/account/next-auth-acc
 import { AddNextAuthAccount, AddNextAuthAccountModel } from '../../../../domain/usecases/account/add-next-auth-account'
 import { AddNextAuthAccountRepository } from '../../../protocols/db/account/add-next-auth-account-repository'
 import { LoadAccountByEmailRepository } from '../../../protocols/db/account/load-account-by-email-repository'
+import { GenerateRandomPassword } from '../../../protocols/factories/generate-random-password'
 
 export class DbNextAuthAddAccount implements AddNextAuthAccount {
   constructor (
     private readonly loadAccount: LoadAccountByEmailRepository,
-    private readonly addAccount: AddNextAuthAccountRepository
+    private readonly addAccount: AddNextAuthAccountRepository,
+    private readonly randomPassword: GenerateRandomPassword
   ) {}
 
   async add (accountModel: AddNextAuthAccountModel): Promise<NextAuthAccount | null> {
@@ -14,7 +16,9 @@ export class DbNextAuthAddAccount implements AddNextAuthAccount {
     if (account) {
       return null
     }
-    await this.addAccount.addNextAuthAccount(accountModel)
+
+    const password = this.randomPassword.generate()
+    await this.addAccount.addNextAuthAccount({ ...accountModel, password })
     return {
       email: 'any_mail@email.com',
       accessToken: 'any_token',
