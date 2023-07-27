@@ -1,3 +1,5 @@
+import { MissingParamError } from '../../../errors/missing-params-error'
+import { badRequest } from '../../../helpers/http/http'
 import { HttpRequest } from '../../../protocols/http'
 import { Validation } from '../../../protocols/validate'
 import { NextAuthLoginController } from './next-auth-login-controller'
@@ -38,5 +40,12 @@ describe('NextAuthLoginController', () => {
     const validationSpy = jest.spyOn(validatorStub, 'validation')
     await sut.handle(makeFakeRequest())
     expect(validationSpy).toHaveBeenCalledWith(makeFakeRequest())
+  })
+
+  test('should return 400 if validator return a error', async () => {
+    const { sut, validatorStub } = makeSut()
+    jest.spyOn(validatorStub, 'validation').mockReturnValueOnce(new MissingParamError('any_field'))
+    const response = await sut.handle(makeFakeRequest())
+    expect(response).toEqual(badRequest(new MissingParamError('any_field')))
   })
 })
