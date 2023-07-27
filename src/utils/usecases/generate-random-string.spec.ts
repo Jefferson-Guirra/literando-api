@@ -9,4 +9,10 @@ describe('GenerateRandomString', () => {
     expect(password).toBeTruthy()
     expect(password.length).toBe(7)
   })
+
+  test('should return throw if generate fails', () => {
+    const sut = makeSut()
+    jest.spyOn(sut, 'generate').mockImplementationOnce(() => { throw new Error('') })
+    expect(sut.generate).toThrow(new Error(''))
+  })
 })
