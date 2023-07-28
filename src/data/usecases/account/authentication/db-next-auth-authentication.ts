@@ -22,8 +22,8 @@ export class DbNextAuthAuthentication implements NextAuthAuthentication {
     }
     await this.updateAccessToken.update(account.id, accessToken)
     return {
-      accessToken: 'any_token',
-      username: 'any_username'
+      accessToken,
+      username: account.username
     }
   }
 }
