@@ -1,19 +1,29 @@
 import request from 'supertest'
 import app from '../config/app'
 import { MongoHelper } from '../../infra/db/helpers/mongo-helper'
-import { Collection } from 'mongodb'
+import { Collection, ObjectId } from 'mongodb'
 import { hash } from 'bcrypt'
 
 let accountCollection: Collection
-const insertAccountDatabase = async (): Promise<void> => {
-  await accountCollection.insertOne({
+let privateRoutesCollection: Collection
+const insertAccountDatabase = async (): Promise<ObjectId> => {
+  const result = await accountCollection.insertOne({
     username: 'any_username',
     email: 'any_email@mail.com',
     password: 'any_password',
     accessToken: 'any_token'
 
   })
+  return result.insertedId
 }
+
+const insertPrivateRoute = async (): Promise<void> => {
+  await privateRoutesCollection.insertOne({
+    routeName: 'any_name',
+    privateKey: 'any_key'
+  })
+}
+
 describe('POST /signup', () => {
   beforeAll(async () => {
     await MongoHelper.connect(process.env.MONGO_URL as string)
@@ -88,7 +98,7 @@ describe('POST /next-auth-signup', () => {
   })
 })
 
-describe('POST /login', () => {
+describe('PUT /login', () => {
   beforeAll(async () => {
     await MongoHelper.connect(process.env.MONGO_URL as string)
   })
@@ -108,7 +118,7 @@ describe('POST /login', () => {
       password
     })
     await request(app)
-      .post('/api/login')
+      .put('/api/login')
       .send({
         email: 'jeffersonloop14@mail.com',
         password: '123'
@@ -117,11 +127,36 @@ describe('POST /login', () => {
 
   test('should return 401 on login', async () => {
     await request(app)
-      .post('/api/login')
+      .put('/api/login')
       .send({
         email: 'jeffersonloop14@gmail.com',
         password: '123'
       }).expect(401)
+  })
+})
+
+describe('Put /next-auth-login', () => {
+  beforeAll(async () => {
+    await MongoHelper.connect(process.env.MONGO_URL as string)
+  })
+  afterAll(async () => {
+    await MongoHelper.disconnect()
+  })
+  beforeEach(async () => {
+    accountCollection = await MongoHelper.getCollection('accounts')
+    privateRoutesCollection = await MongoHelper.getCollection('privateRoutes')
+    await accountCollection?.deleteMany({})
+    await privateRoutesCollection.deleteMany({})
+  })
+  test('should return 200 on succeeds', async () => {
+    await insertAccountDatabase()
+    await insertPrivateRoute()
+    await request(app).put(('/api/next-auth-login')).send({
+      routeName: 'any_name',
+      privateKey: 'any_key',
+      email: 'any_email@mail.com',
+      accessToken: 'any_token'
+    }).expect(200)
   })
 })
 
@@ -138,17 +173,12 @@ describe('POST /logout', () => {
   })
 
   test('should return 200 if logout success', async () => {
-    const result = await accountCollection.insertOne({
-      username: 'any_username',
-      email: 'any_email@mail.com',
-      password: 'any_password',
-      accessToken: 'any_token'
-    })
-    await request(app).post('/api/logout').send({ accessToken: 'any_token' }).expect(200)
-    const account = await accountCollection.findOne({ _id: result.insertedId })
+    const accountId = await insertAccountDatabase()
+    await request(app).put('/api/logout').send({ accessToken: 'any_token' }).expect(200)
+    const account = await accountCollection.findOne({ _id: accountId })
     expect(account?.accessToken).toBeFalsy()
   })
   test('should return 401 if logout fails', async () => {
-    await request(app).post('/api/logout').send({ accessToken: 'any_token' }).expect(401)
+    await request(app).put('/api/logout').send({ accessToken: 'any_token' }).expect(401)
   })
 })
