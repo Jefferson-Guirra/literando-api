@@ -158,9 +158,17 @@ describe('Put /next-auth-login', () => {
       accessToken: 'any_token'
     }).expect(200)
   })
+  test('should return 401 if login fails', async () => {
+    await request(app).put('/api/next-auth-login').send({
+      routeName: 'any_name',
+      privateKey: 'any_key',
+      email: 'any_email@mail.com',
+      accessToken: 'any_token'
+    }).expect(401)
+  })
 })
 
-describe('POST /logout', () => {
+describe('Put /logout', () => {
   beforeAll(async () => {
     await MongoHelper.connect(process.env.MONGO_URL as string)
   })
