@@ -14,7 +14,10 @@ export class DbNextAuthAuthentication implements NextAuthAuthentication {
     if (!route || privateKey !== route.privateKey) {
       return undefined
     }
-    await this.loadAccount.loadByEmail(email)
+    const account = await this.loadAccount.loadByEmail(email)
+    if (!account) {
+      return undefined
+    }
     return {
       accessToken: 'any_token',
       username: 'any_username'
