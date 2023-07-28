@@ -27,4 +27,9 @@ describe('PrivateRouteMongoRepository', () => {
     const response = await sut.loadByRouteName('any_name')
     expect(response).toEqual({ routeName: 'any_name', privateKey: 'any_key' })
   })
+  test('should return null if LoadPrivateRoute return null', async () => {
+    const sut = makeSut()
+    const response = await sut.loadByRouteName('any_name')
+    expect(response).toBeFalsy()
+  })
 })
