@@ -4,9 +4,9 @@ import { LoadPrivateRouteByNameRepository } from '../../../protocols/db/private-
 export class DbNextAuthAuthentication implements NextAuthAuthentication {
   constructor (private readonly loadPrivateRoute: LoadPrivateRouteByNameRepository) {}
   async auth (data: nextAuthAuthenticationModel): Promise<NextAuth | null | undefined> {
-    const { routeName } = data
+    const { routeName, privateKey } = data
     const route = await this.loadPrivateRoute.loadByRouteName(routeName)
-    if (!route) {
+    if (!route || privateKey !== route.privateKey) {
       return undefined
     }
     return null
