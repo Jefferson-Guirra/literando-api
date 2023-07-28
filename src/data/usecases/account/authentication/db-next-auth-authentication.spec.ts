@@ -131,4 +131,13 @@ describe('DbNextAuthAuthentication', () => {
     const response = sut.auth(makeFakeRequest())
     await expect(response).rejects.toThrow()
   })
+
+  test('should return account data', async () => {
+    const { sut } = makeSut()
+    const response = await sut.auth(makeFakeRequest())
+    expect(response).toEqual({
+      accessToken: 'any_token',
+      username: 'any_username'
+    })
+  })
 })
