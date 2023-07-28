@@ -95,4 +95,11 @@ describe('DbNextAuthAuthentication', () => {
     const response = await sut.auth(makeFakeRequest())
     expect(response).toEqual(undefined)
   })
+
+  test('should return thro if loadAccount return throw', async () => {
+    const { loadAccountStub, sut } = makeSut()
+    jest.spyOn(loadAccountStub, 'loadByEmail').mockReturnValueOnce(Promise.reject(new Error('')))
+    const response = sut.auth(makeFakeRequest())
+    await expect(response).rejects.toThrow()
+  })
 })
