@@ -43,4 +43,13 @@ describe('DbNextAuthAuthentication', () => {
     const response = await sut.auth(makeFakeRequest())
     expect(response).toEqual(undefined)
   })
+  test('should return undefined if password provided invalid', async () => {
+    const { sut, loadPrivateRouteStub } = makeSut()
+    jest.spyOn(loadPrivateRouteStub, 'loadByRouteName').mockReturnValueOnce(Promise.resolve({
+      routeName: 'any_name',
+      privateKey: 'random_key'
+    }))
+    const response = await sut.auth(makeFakeRequest())
+    expect(response).toEqual(undefined)
+  })
 })
