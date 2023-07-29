@@ -1,6 +1,6 @@
 import { ResetPasswordEmail, ResetPasswordEmailModel } from '../../../domain/usecases/email/reset-pasword-email'
 import { MissingParamError } from '../../errors/missing-params-error'
-import { badRequest, serverError, unauthorized } from '../../helpers/http/http'
+import { badRequest, ok, serverError, unauthorized } from '../../helpers/http/http'
 import { HttpRequest } from '../../protocols/http'
 import { Validation } from '../../protocols/validate'
 import { ResetPasswordEmailController } from './reset-password-email-controller'
@@ -78,5 +78,11 @@ describe('ResetPasswordEmailController', () => {
     jest.spyOn(resetPasswordEmailStub, 'reset').mockReturnValueOnce(Promise.resolve(null))
     const response = await sut.handle(makeFakeRequest())
     expect(response).toEqual(unauthorized())
+  })
+
+  test('should return 200 on succeeds', async () => {
+    const { sut } = makeSut()
+    const response = await sut.handle(makeFakeRequest())
+    expect(response).toEqual(ok({ email: 'any_email@mail.com', id: 'any_id' }))
   })
 })
