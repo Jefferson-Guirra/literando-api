@@ -1,5 +1,5 @@
 import { ResetPasswordEmail } from '../../../domain/usecases/email/reset-pasword-email'
-import { badRequest, ok, serverError } from '../../helpers/http/http'
+import { badRequest, ok, serverError, unauthorized } from '../../helpers/http/http'
 import { Controller } from '../../protocols/controller'
 import { HttpRequest, HttpResponse } from '../../protocols/http'
 import { Validation } from '../../protocols/validate'
@@ -18,6 +18,9 @@ export class ResetPasswordEmailController implements Controller {
       }
       const { email } = httpRequest.body
       const data = await this.resetPasswordEmail.reset(email)
+      if (!data) {
+        return unauthorized()
+      }
       return ok(data)
     } catch (err) {
       return serverError(err as Error)
