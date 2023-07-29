@@ -1,9 +1,10 @@
-import { ResetPasswordEmail } from '../../../domain/usecases/email/reset-pasword-email'
+import { ResetPasswordEmail, ResetPasswordEmailModel } from '../../../domain/usecases/email/reset-pasword-email'
 import { MissingParamError } from '../../errors/missing-params-error'
-import { badRequest, ok, serverError } from '../../helpers/http/http'
+import { badRequest, serverError, unauthorized } from '../../helpers/http/http'
 import { HttpRequest } from '../../protocols/http'
 import { Validation } from '../../protocols/validate'
 import { ResetPasswordEmailController } from './reset-password-email-controller'
+
 const makeFakeRequest = (): HttpRequest => {
   return {
     body: {
@@ -14,8 +15,8 @@ const makeFakeRequest = (): HttpRequest => {
 
 const makeResetPasswordEmailStub = (): ResetPasswordEmail => {
   class ResetPasswordEmailStub implements ResetPasswordEmail {
-    async reset (email: string): Promise<{ email: string, success: boolean }> {
-      return await Promise.resolve({ email: 'any_email@mail.com', success: true })
+    async reset (email: string): Promise< ResetPasswordEmailModel | null > {
+      return await Promise.resolve({ email: 'any_email@mail.com', id: 'any_id' })
     }
   }
   return new ResetPasswordEmailStub()
@@ -72,9 +73,10 @@ describe('ResetPasswordEmailController', () => {
     expect(response).toEqual(serverError())
   })
 
-  test('should return 200 on succeeds', async () => {
-    const { sut } = makeSut()
+  test('should return 401 if resetPasswordEmail return null', async () => {
+    const { sut, resetPasswordEmailStub } = makeSut()
+    jest.spyOn(resetPasswordEmailStub, 'reset').mockReturnValueOnce(Promise.resolve(null))
     const response = await sut.handle(makeFakeRequest())
-    expect(response).toEqual(ok({ email: 'any_email@mail.com', success: true }))
+    expect(response).toEqual(unauthorized())
   })
 })
