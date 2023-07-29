@@ -1,3 +1,4 @@
+import { ResetPasswordEmail } from '../../../domain/usecases/email/reset-pasword-email'
 import { MissingParamError } from '../../errors/missing-params-error'
 import { badRequest } from '../../helpers/http/http'
 import { HttpRequest } from '../../protocols/http'
@@ -10,6 +11,15 @@ const makeFakeRequest = (): HttpRequest => {
     }
   }
 }
+
+const makeResetPasswordEmailStub = (): ResetPasswordEmail => {
+  class ResetPasswordEmailStub implements ResetPasswordEmail {
+    async reset (email: string): Promise<{ email: string, success: boolean }> {
+      return await Promise.resolve({ email: 'any_email@mail.com', success: true })
+    }
+  }
+  return new ResetPasswordEmailStub()
+}
 const makeValidationStub = (): Validation => {
   class ValidationStub implements Validation {
     validation (input: any): Error | undefined {
@@ -19,13 +29,16 @@ const makeValidationStub = (): Validation => {
   return new ValidationStub()
 }
 interface SutTypes {
+  resetPasswordEmailStub: ResetPasswordEmail
   validatorStub: Validation
   sut: ResetPasswordEmailController
 }
 const makeSut = (): SutTypes => {
+  const resetPasswordEmailStub = makeResetPasswordEmailStub()
   const validatorStub = makeValidationStub()
-  const sut = new ResetPasswordEmailController(validatorStub)
+  const sut = new ResetPasswordEmailController(validatorStub, resetPasswordEmailStub)
   return {
+    resetPasswordEmailStub,
     validatorStub,
     sut
   }
@@ -43,5 +56,12 @@ describe('ResetPasswordEmailController', () => {
     jest.spyOn(validatorStub, 'validation').mockReturnValueOnce(new MissingParamError('any_field'))
     const response = await sut.handle(makeFakeRequest())
     expect(response).toEqual(badRequest(new MissingParamError('any_field')))
+  })
+
+  test('should call resetPasswordEmail with correct email', async () => {
+    const { sut, resetPasswordEmailStub } = makeSut()
+    const resetSpy = jest.spyOn(resetPasswordEmailStub, 'reset')
+    await sut.handle(makeFakeRequest())
+    expect(resetSpy).toBeCalledWith('any_email@mail.com')
   })
 })
