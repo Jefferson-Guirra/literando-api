@@ -17,8 +17,8 @@ export class ResetPasswordEmailController implements Controller {
         return badRequest(error)
       }
       const { email } = httpRequest.body
-      await this.resetPasswordEmail.reset(email)
-      return ok('success')
+      const data = await this.resetPasswordEmail.reset(email)
+      return ok(data)
     } catch (err) {
       return serverError(err as Error)
     }
