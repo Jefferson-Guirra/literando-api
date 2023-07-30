@@ -72,4 +72,9 @@ describe('DbREsetPasswordEmail', () => {
     const promise = sut.reset('any_email@mail.com')
     await expect(promise).rejects.toThrow()
   })
+  test('should return data account on success', async () => {
+    const { sut } = makeSut()
+    const response = await sut.reset('any_email@mail.com')
+    expect(response).toEqual({ email: 'any_email@mail.com', id: 'any_id' })
+  })
 })
