@@ -13,10 +13,11 @@ export class DbResetPasswordEmail implements ResetPasswordEmail {
     if (!account) {
       return null
     }
-    await this.SendMessage.sendEmail(account.email)
+    const { email: emailMessage, id } = account
+    await this.SendMessage.sendEmail(email)
     return {
-      email: 'any_email@mail.com',
-      id: 'any_id'
+      email: emailMessage,
+      id
     }
   }
 }
