@@ -42,4 +42,10 @@ describe('DbREsetPasswordEmail', () => {
     const promise = sut.reset('any_email@mail.com')
     await expect(promise).rejects.toThrow()
   })
+  test('should return null if loadAccount return null', async () => {
+    const { sut, loadAccountStub } = makeSut()
+    jest.spyOn(loadAccountStub, 'loadByEmail').mockReturnValueOnce(Promise.resolve(null))
+    const response = await sut.reset('any_email@mail.com')
+    expect(response).toBeFalsy()
+  })
 })
