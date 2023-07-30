@@ -5,7 +5,13 @@ export class DbResetPasswordEmail implements ResetPasswordEmail {
   constructor (private readonly loadAccount: LoadAccountByEmailRepository) {}
 
   async reset (email: string): Promise<ResetPasswordEmailModel | null> {
-    await this.loadAccount.loadByEmail(email)
-    return null
+    const account = await this.loadAccount.loadByEmail(email)
+    if (!account) {
+      return null
+    }
+    return {
+      email: 'any_email@mail.com',
+      id: 'any_id'
+    }
   }
 }
