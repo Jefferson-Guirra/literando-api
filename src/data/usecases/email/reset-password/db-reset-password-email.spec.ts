@@ -1,6 +1,6 @@
 import { AccountModel } from '../../../../domain/models/account/account'
 import { LoadAccountByEmailRepository } from '../../../protocols/db/account/load-account-by-email-repository'
-import { DbREsetPasswordEmail } from './db-reset--password-email'
+import { DbResetPasswordEmail } from './db-reset--password-email'
 
 const makeLoadAccountStub = (): LoadAccountByEmailRepository => {
   class LoadAccountByEmailRepositoryStub implements LoadAccountByEmailRepository {
@@ -17,12 +17,12 @@ const makeLoadAccountStub = (): LoadAccountByEmailRepository => {
 }
 interface SUtTypes {
   loadAccountStub: LoadAccountByEmailRepository
-  sut: DbREsetPasswordEmail
+  sut: DbResetPasswordEmail
 }
 
 const makeSut = (): SUtTypes => {
   const loadAccountStub = makeLoadAccountStub()
-  const sut = new DbREsetPasswordEmail(loadAccountStub)
+  const sut = new DbResetPasswordEmail(loadAccountStub)
   return {
     loadAccountStub,
     sut
@@ -35,5 +35,11 @@ describe('DbREsetPasswordEmail', () => {
     const loadSpy = jest.spyOn(loadAccountStub, 'loadByEmail')
     await sut.reset('any_email@mail.com')
     expect(loadSpy).toBeCalledWith('any_email@mail.com')
+  })
+  test('should return throw if loadAccount fails', async () => {
+    const { sut, loadAccountStub } = makeSut()
+    jest.spyOn(loadAccountStub, 'loadByEmail').mockReturnValueOnce(Promise.reject(new Error('')))
+    const promise = sut.reset('any_email@mail.com')
+    await expect(promise).rejects.toThrow()
   })
 })

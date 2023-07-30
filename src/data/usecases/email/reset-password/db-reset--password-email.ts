@@ -1,7 +1,7 @@
 import { ResetPasswordEmail, ResetPasswordEmailModel } from '../../../../domain/usecases/email/reset-pasword-email'
 import { LoadAccountByEmailRepository } from '../../../protocols/db/account/load-account-by-email-repository'
 
-export class DbREsetPasswordEmail implements ResetPasswordEmail {
+export class DbResetPasswordEmail implements ResetPasswordEmail {
   constructor (private readonly loadAccount: LoadAccountByEmailRepository) {}
 
   async reset (email: string): Promise<ResetPasswordEmailModel | null> {
