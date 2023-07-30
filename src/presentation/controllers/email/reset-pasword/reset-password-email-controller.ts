@@ -1,8 +1,8 @@
-import { ResetPasswordEmail } from '../../../domain/usecases/email/reset-pasword-email'
-import { badRequest, ok, serverError, unauthorized } from '../../helpers/http/http'
-import { Controller } from '../../protocols/controller'
-import { HttpRequest, HttpResponse } from '../../protocols/http'
-import { Validation } from '../../protocols/validate'
+import { ResetPasswordEmail } from '../../../../domain/usecases/email/reset-pasword-email'
+import { badRequest, ok, serverError, unauthorized } from '../../../helpers/http/http'
+import { Controller } from '../../../protocols/controller'
+import { HttpRequest, HttpResponse } from '../../../protocols/http'
+import { Validation } from '../../../protocols/validate'
 
 export class ResetPasswordEmailController implements Controller {
   constructor (
