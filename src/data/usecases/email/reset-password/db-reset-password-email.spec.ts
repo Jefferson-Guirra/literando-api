@@ -6,7 +6,6 @@ import { DbResetPasswordEmail } from './db-reset-password-email'
 const makeSendMessageStub = (): SendMessage => {
   class SendMessageStub implements SendMessage {
     async sendEmail (email: string): Promise<void> {
-
     }
   }
   return new SendMessageStub()
@@ -61,10 +60,16 @@ describe('DbREsetPasswordEmail', () => {
     const response = await sut.reset('any_email@mail.com')
     expect(response).toBeFalsy()
   })
-  test('DbResetPasswordEmail call sendMessage with correct email', async () => {
+  test('should call sendMessage with correct email', async () => {
     const { sut, sendMessageStub } = makeSut()
     const sendEmailSpy = jest.spyOn(sendMessageStub, 'sendEmail')
     await sut.reset('any_email@mail.com')
     expect(sendEmailSpy).toHaveBeenCalledWith('any_email@mail.com')
+  })
+  test('should return throw if sendMessage return throw', async () => {
+    const { sut, sendMessageStub } = makeSut()
+    jest.spyOn(sendMessageStub, 'sendEmail').mockReturnValueOnce(Promise.reject(new Error('')))
+    const promise = sut.reset('any_email@mail.com')
+    await expect(promise).rejects.toThrow()
   })
 })
