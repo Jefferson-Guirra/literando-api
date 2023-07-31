@@ -22,7 +22,7 @@ export class DbResetPasswordEmail implements ResetPasswordEmail {
     if (!account) {
       return null
     }
-    const { id } = account
+    const { id, username } = account
     const token = await this.encrypter.encrypt(id)
     const request = await this.getRequest.find(email)
     let accessToken = ''
@@ -43,7 +43,7 @@ export class DbResetPasswordEmail implements ResetPasswordEmail {
       }
     }
 
-    await this.sendMessage.sendResetPasswordEmail(email, accessToken)
+    await this.sendMessage.sendResetPasswordEmail(email, username, accessToken)
     return {
       id,
       email,

@@ -163,7 +163,7 @@ describe('DbREsetPasswordEmail', () => {
     const { sut, sendMessageStub } = makeSut()
     const sendEmailSpy = jest.spyOn(sendMessageStub, 'sendResetPasswordEmail')
     await sut.reset('any_email@mail.com')
-    expect(sendEmailSpy).toHaveBeenCalledWith('any_email@mail.com', 'any_token')
+    expect(sendEmailSpy).toHaveBeenCalledWith('any_email@mail.com', 'any_username', 'any_token')
   })
   test('should return throw if sendMessage return throw', async () => {
     const { sut, sendMessageStub } = makeSut()

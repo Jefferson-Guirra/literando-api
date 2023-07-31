@@ -6,7 +6,7 @@ export class NodemailerAdapter implements SendResetPasswordMessage {
     private readonly transporterEmail: NodemailerTransporter
   ) {}
 
-  async sendResetPasswordEmail (email: string, accessToken: string): Promise<void> {
+  async sendResetPasswordEmail (email: string, username: string, accessToken: string): Promise<void> {
     await this.transporterEmail.active(email)
   }
 }

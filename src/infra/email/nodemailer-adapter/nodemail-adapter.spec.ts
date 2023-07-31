@@ -27,14 +27,14 @@ describe('NodemailerAdapter', () => {
   test('should  call nodemailerTRansporter with correct message', async () => {
     const { sut, nodemailerTransporterStub } = makeSut()
     const activeSpy = jest.spyOn(nodemailerTransporterStub, 'active')
-    await sut.sendResetPasswordEmail('any_email@mail.com', 'any_token')
+    await sut.sendResetPasswordEmail('any_email@mail.com', 'any_username', 'any_token')
     expect(activeSpy).toHaveBeenCalledWith('any_email@mail.com')
   })
 
   test('should return throw if nodemailerTransporter fails', async () => {
     const { sut, nodemailerTransporterStub } = makeSut()
     jest.spyOn(nodemailerTransporterStub, 'active').mockReturnValueOnce(Promise.reject(new Error('')))
-    const promise = sut.sendResetPasswordEmail('any_email@mail.com', 'any_email@mail.com')
+    const promise = sut.sendResetPasswordEmail('any_email@mail.com', 'any_username', 'any_email@mail.com')
     await expect(promise).rejects.toThrow()
   })
 })
