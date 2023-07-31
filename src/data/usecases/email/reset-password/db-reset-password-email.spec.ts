@@ -1,12 +1,26 @@
 import { AccountModel } from '../../../../domain/models/account/account'
 import { Encrypter } from '../../../protocols/criptography/encrypter'
 import { LoadAccountByEmailRepository } from '../../../protocols/db/account/load-account-by-email-repository'
-import { GetResetPasswordRequest, ResetPasswordRequestModel } from '../../../protocols/db/email/get-reset-password-request'
+import { GetResetPasswordRequestRepository, ResetPasswordRequestModel } from '../../../protocols/db/email/get-reset-password-request-repository'
+import { UpdateResetPasswordTokenRepository } from '../../../protocols/db/email/update-reset-password-token-repository'
 import { SendMessage } from '../../../protocols/email/send-message'
 import { DbResetPasswordEmail } from './db-reset-password-email'
 
-const makeGetRequestStub = (): GetResetPasswordRequest => {
-  class GetResetRequestStub implements GetResetPasswordRequest {
+const makeUpdateResetPasswordTokenStub = (): UpdateResetPasswordTokenRepository => {
+  class UpdateResetPasswordTokenRepositoryStub implements UpdateResetPasswordTokenRepository {
+    async update (email: string, accessToken: string): Promise<ResetPasswordRequestModel | null> {
+      return await Promise.resolve({
+        id: 'any_id',
+        email: 'any_email@mail.com',
+        accessToken: 'any_token'
+      })
+    }
+  }
+  return new UpdateResetPasswordTokenRepositoryStub()
+}
+
+const makeGetRequestStub = (): GetResetPasswordRequestRepository => {
+  class GetResetRequestStub implements GetResetPasswordRequestRepository {
     async find (email: string): Promise<ResetPasswordRequestModel | null> {
       return await Promise.resolve({
         id: 'any_id',
@@ -20,7 +34,7 @@ const makeGetRequestStub = (): GetResetPasswordRequest => {
 const makeEncrypterStub = (): Encrypter => {
   class EncrypterStub implements Encrypter {
     async encrypt (value: string): Promise<string> {
-      return await Promise.resolve(' hashed_token')
+      return await Promise.resolve('hashed_token')
     }
   }
   return new EncrypterStub()
@@ -47,7 +61,8 @@ const makeLoadAccountStub = (): LoadAccountByEmailRepository => {
   return new LoadAccountByEmailRepositoryStub()
 }
 interface SUtTypes {
-  getResetPasswordRequestStub: GetResetPasswordRequest
+  updateResetPasswordTokenStub: UpdateResetPasswordTokenRepository
+  getResetPasswordRequestStub: GetResetPasswordRequestRepository
   encrypterStub: Encrypter
   sendMessageStub: SendMessage
   loadAccountStub: LoadAccountByEmailRepository
@@ -55,12 +70,19 @@ interface SUtTypes {
 }
 
 const makeSut = (): SUtTypes => {
+  const updateResetPasswordTokenStub = makeUpdateResetPasswordTokenStub()
   const getResetPasswordRequestStub = makeGetRequestStub()
   const encrypterStub = makeEncrypterStub()
   const sendMessageStub = makeSendMessageStub()
   const loadAccountStub = makeLoadAccountStub()
-  const sut = new DbResetPasswordEmail(loadAccountStub, sendMessageStub, encrypterStub, getResetPasswordRequestStub)
+  const sut = new DbResetPasswordEmail(
+    loadAccountStub, sendMessageStub,
+    encrypterStub,
+    getResetPasswordRequestStub,
+    updateResetPasswordTokenStub
+  )
   return {
+    updateResetPasswordTokenStub,
     getResetPasswordRequestStub,
     encrypterStub,
     sendMessageStub,
@@ -105,6 +127,12 @@ describe('DbREsetPasswordEmail', () => {
     const findSpy = jest.spyOn(getResetPasswordRequestStub, 'find')
     await sut.reset('any_email@mail.com')
     expect(findSpy).toBeCalledWith('any_email@mail.com')
+  })
+  test('should  call updateResetPasswordTokenRepository call with correct email', async () => {
+    const { sut, updateResetPasswordTokenStub } = makeSut()
+    const updateSpy = jest.spyOn(updateResetPasswordTokenStub, 'update')
+    await sut.reset('any_email@mail.com')
+    expect(updateSpy).toBeCalledWith('any_email@mail.com', 'hashed_token')
   })
   test('should call sendMessage with correct email', async () => {
     const { sut, sendMessageStub } = makeSut()
