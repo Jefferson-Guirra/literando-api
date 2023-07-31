@@ -4,12 +4,12 @@ import { LoadAccountByEmailRepository } from '../../../protocols/db/account/load
 import { AddResetPasswordRequestRepository } from '../../../protocols/db/email/add-reset-password-request-repository'
 import { GetResetPasswordRequestRepository } from '../../../protocols/db/email/get-reset-password-request-repository'
 import { UpdateResetPasswordTokenRepository } from '../../../protocols/db/email/update-reset-password-token-repository'
-import { SendMessage } from '../../../protocols/email/send-message'
+import { SendResetPasswordMessage } from '../../../protocols/email/send-reset-password-message'
 
 export class DbResetPasswordEmail implements ResetPasswordEmail {
   constructor (
     private readonly loadAccount: LoadAccountByEmailRepository,
-    private readonly sendMessage: SendMessage,
+    private readonly sendMessage: SendResetPasswordMessage,
     private readonly encrypter: Encrypter,
     private readonly getRequest: GetResetPasswordRequestRepository,
     private readonly updateAccessToken: UpdateResetPasswordTokenRepository,
