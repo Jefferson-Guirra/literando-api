@@ -1,3 +1,3 @@
 export interface SendMessage {
-  sendEmail: (email: string) => Promise<void>
+  sendEmail: (email: string, accessToken: string) => Promise<void>
 }

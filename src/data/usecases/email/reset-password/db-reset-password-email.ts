@@ -9,7 +9,7 @@ import { SendMessage } from '../../../protocols/email/send-message'
 export class DbResetPasswordEmail implements ResetPasswordEmail {
   constructor (
     private readonly loadAccount: LoadAccountByEmailRepository,
-    private readonly SendMessage: SendMessage,
+    private readonly sendMessage: SendMessage,
     private readonly encrypter: Encrypter,
     private readonly getRequest: GetResetPasswordRequestRepository,
     private readonly updateAccessToken: UpdateResetPasswordTokenRepository,
@@ -22,20 +22,32 @@ export class DbResetPasswordEmail implements ResetPasswordEmail {
     if (!account) {
       return null
     }
-    const { email: emailMessage, id } = account
+    const { id } = account
     const token = await this.encrypter.encrypt(id)
     const request = await this.getRequest.find(email)
+    let accessToken = ''
 
     if (request) {
-      await this.updateAccessToken.update(email, token)
+      const updateRequest = await this.updateAccessToken.update(email, token)
+
+      if (updateRequest) {
+        const { accessToken: token } = updateRequest
+        accessToken = token
+      }
     } else {
-      await this.addRequest.add(email, token)
+      const addREquest = await this.addRequest.add(email, token)
+
+      if (addREquest) {
+        const { accessToken: newToken } = addREquest
+        accessToken = newToken
+      }
     }
 
-    await this.SendMessage.sendEmail(email)
+    await this.sendMessage.sendEmail(email, accessToken)
     return {
-      email: emailMessage,
-      id
+      id,
+      email,
+      accessToken
     }
   }
 }
