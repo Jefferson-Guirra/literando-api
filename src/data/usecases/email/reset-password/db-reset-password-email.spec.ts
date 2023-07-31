@@ -1,7 +1,7 @@
 import { AccountModel } from '../../../../domain/models/account/account'
 import { Encrypter } from '../../../protocols/criptography/encrypter'
 import { LoadAccountByEmailRepository } from '../../../protocols/db/account/load-account-by-email-repository'
-import { GetResetPasswordRequest, ResetPasswordRequestModel } from '../../../protocols/email/get-reset-password-request'
+import { GetResetPasswordRequest, ResetPasswordRequestModel } from '../../../protocols/db/email/get-reset-password-request'
 import { SendMessage } from '../../../protocols/email/send-message'
 import { DbResetPasswordEmail } from './db-reset-password-email'
 
