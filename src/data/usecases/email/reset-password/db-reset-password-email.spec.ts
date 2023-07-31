@@ -1,9 +1,22 @@
 import { AccountModel } from '../../../../domain/models/account/account'
 import { Encrypter } from '../../../protocols/criptography/encrypter'
 import { LoadAccountByEmailRepository } from '../../../protocols/db/account/load-account-by-email-repository'
+import { GetResetPasswordRequest, ResetPasswordRequestModel } from '../../../protocols/email/get-reset-password-request'
 import { SendMessage } from '../../../protocols/email/send-message'
 import { DbResetPasswordEmail } from './db-reset-password-email'
 
+const makeGetRequestStub = (): GetResetPasswordRequest => {
+  class GetResetRequestStub implements GetResetPasswordRequest {
+    async find (email: string): Promise<ResetPasswordRequestModel | null> {
+      return await Promise.resolve({
+        id: 'any_id',
+        email: 'any_email@mail.com',
+        accessToken: 'any_token'
+      })
+    }
+  }
+  return new GetResetRequestStub()
+}
 const makeEncrypterStub = (): Encrypter => {
   class EncrypterStub implements Encrypter {
     async encrypt (value: string): Promise<string> {
@@ -34,6 +47,7 @@ const makeLoadAccountStub = (): LoadAccountByEmailRepository => {
   return new LoadAccountByEmailRepositoryStub()
 }
 interface SUtTypes {
+  getResetPasswordRequestStub: GetResetPasswordRequest
   encrypterStub: Encrypter
   sendMessageStub: SendMessage
   loadAccountStub: LoadAccountByEmailRepository
@@ -41,11 +55,13 @@ interface SUtTypes {
 }
 
 const makeSut = (): SUtTypes => {
+  const getResetPasswordRequestStub = makeGetRequestStub()
   const encrypterStub = makeEncrypterStub()
   const sendMessageStub = makeSendMessageStub()
   const loadAccountStub = makeLoadAccountStub()
-  const sut = new DbResetPasswordEmail(loadAccountStub, sendMessageStub, encrypterStub)
+  const sut = new DbResetPasswordEmail(loadAccountStub, sendMessageStub, encrypterStub, getResetPasswordRequestStub)
   return {
+    getResetPasswordRequestStub,
     encrypterStub,
     sendMessageStub,
     loadAccountStub,
@@ -83,6 +99,12 @@ describe('DbREsetPasswordEmail', () => {
     jest.spyOn(encrypterStub, 'encrypt').mockReturnValueOnce(Promise.reject(new Error('')))
     const promise = sut.reset('any_email@mail.com')
     await expect(promise).rejects.toThrow()
+  })
+  test('should call GetResetPasswordRequest with correct email', async () => {
+    const { sut, getResetPasswordRequestStub } = makeSut()
+    const findSpy = jest.spyOn(getResetPasswordRequestStub, 'find')
+    await sut.reset('any_email@mail.com')
+    expect(findSpy).toBeCalledWith('any_email@mail.com')
   })
   test('should call sendMessage with correct email', async () => {
     const { sut, sendMessageStub } = makeSut()
