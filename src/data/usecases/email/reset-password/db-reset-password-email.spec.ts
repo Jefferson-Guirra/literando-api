@@ -159,11 +159,11 @@ describe('DbREsetPasswordEmail', () => {
     await sut.reset('any_email@mail.com')
     expect(addSpy).toBeCalledWith('any_email@mail.com', 'hashed_token')
   })
-  test('should call sendMessage with correct email', async () => {
+  test('should call sendMessage with correct values', async () => {
     const { sut, sendMessageStub } = makeSut()
     const sendEmailSpy = jest.spyOn(sendMessageStub, 'sendEmail')
     await sut.reset('any_email@mail.com')
-    expect(sendEmailSpy).toHaveBeenCalledWith('any_email@mail.com')
+    expect(sendEmailSpy).toHaveBeenCalledWith('any_email@mail.com', 'any_token')
   })
   test('should return throw if sendMessage return throw', async () => {
     const { sut, sendMessageStub } = makeSut()
@@ -174,6 +174,6 @@ describe('DbREsetPasswordEmail', () => {
   test('should return data account on success', async () => {
     const { sut } = makeSut()
     const response = await sut.reset('any_email@mail.com')
-    expect(response).toEqual({ email: 'any_email@mail.com', id: 'any_id' })
+    expect(response).toEqual({ email: 'any_email@mail.com', id: 'any_id', accessToken: 'any_token' })
   })
 })
