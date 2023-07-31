@@ -49,7 +49,7 @@ const makeEncrypterStub = (): Encrypter => {
 }
 const makeSendMessageStub = (): SendMessage => {
   class SendMessageStub implements SendMessage {
-    async sendEmail (email: string): Promise<void> {
+    async sendResetPasswordEmail (email: string): Promise<void> {
     }
   }
   return new SendMessageStub()
@@ -161,13 +161,13 @@ describe('DbREsetPasswordEmail', () => {
   })
   test('should call sendMessage with correct values', async () => {
     const { sut, sendMessageStub } = makeSut()
-    const sendEmailSpy = jest.spyOn(sendMessageStub, 'sendEmail')
+    const sendEmailSpy = jest.spyOn(sendMessageStub, 'sendResetPasswordEmail')
     await sut.reset('any_email@mail.com')
     expect(sendEmailSpy).toHaveBeenCalledWith('any_email@mail.com', 'any_token')
   })
   test('should return throw if sendMessage return throw', async () => {
     const { sut, sendMessageStub } = makeSut()
-    jest.spyOn(sendMessageStub, 'sendEmail').mockReturnValueOnce(Promise.reject(new Error('')))
+    jest.spyOn(sendMessageStub, 'sendResetPasswordEmail').mockReturnValueOnce(Promise.reject(new Error('')))
     const promise = sut.reset('any_email@mail.com')
     await expect(promise).rejects.toThrow()
   })

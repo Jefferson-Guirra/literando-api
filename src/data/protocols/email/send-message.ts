@@ -1,3 +1,3 @@
 export interface SendMessage {
-  sendEmail: (email: string, accessToken: string) => Promise<void>
+  sendResetPasswordEmail: (email: string, accessToken: string) => Promise<void>
 }

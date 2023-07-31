@@ -43,7 +43,7 @@ export class DbResetPasswordEmail implements ResetPasswordEmail {
       }
     }
 
-    await this.sendMessage.sendEmail(email, accessToken)
+    await this.sendMessage.sendResetPasswordEmail(email, accessToken)
     return {
       id,
       email,

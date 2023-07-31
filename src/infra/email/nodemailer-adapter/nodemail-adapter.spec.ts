@@ -3,7 +3,7 @@ import { NodemailerTransporter } from './protocols/nodemailer-transporter'
 
 const makeTransporterStub = (): NodemailerTransporter => {
   class NodemailerTransporterStub implements NodemailerTransporter {
-    async active (email: string): Promise<void> {
+    async active (message: string): Promise<void> {
 
     }
   }
@@ -24,17 +24,17 @@ const makeSut = (): SutTypes => {
 }
 
 describe('NodemailerAdapter', () => {
-  test('should  call nodemailerTRansporter with correct email', async () => {
+  test('should  call nodemailerTRansporter with correct message', async () => {
     const { sut, nodemailerTransporterStub } = makeSut()
     const activeSpy = jest.spyOn(nodemailerTransporterStub, 'active')
-    await sut.sendEmail('any_email@mail.com')
+    await sut.sendResetPasswordEmail('any_email@mail.com', 'any_token')
     expect(activeSpy).toHaveBeenCalledWith('any_email@mail.com')
   })
 
   test('should return throw if nodemailerTransporter fails', async () => {
     const { sut, nodemailerTransporterStub } = makeSut()
     jest.spyOn(nodemailerTransporterStub, 'active').mockReturnValueOnce(Promise.reject(new Error('')))
-    const promise = sut.sendEmail('any_email@mail.com')
+    const promise = sut.sendResetPasswordEmail('any_email@mail.com', 'any_email@mail.com')
     await expect(promise).rejects.toThrow()
   })
 })
