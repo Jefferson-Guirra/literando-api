@@ -16,7 +16,7 @@ const makeFakeRequest = (): HttpRequest => {
 const makeResetPasswordEmailStub = (): ResetPasswordEmail => {
   class ResetPasswordEmailStub implements ResetPasswordEmail {
     async reset (email: string): Promise< ResetPasswordEmailModel | null > {
-      return await Promise.resolve({ email: 'any_email@mail.com', id: 'any_id' })
+      return await Promise.resolve({ email: 'any_email@mail.com', id: 'any_id', accessToken: 'any_token' })
     }
   }
   return new ResetPasswordEmailStub()
@@ -83,6 +83,6 @@ describe('ResetPasswordEmailController', () => {
   test('should return 200 on succeeds', async () => {
     const { sut } = makeSut()
     const response = await sut.handle(makeFakeRequest())
-    expect(response).toEqual(ok({ email: 'any_email@mail.com', id: 'any_id' }))
+    expect(response).toEqual(ok({ email: 'any_email@mail.com', id: 'any_id', accessToken: 'any_token' }))
   })
 })

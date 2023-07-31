@@ -1,6 +1,7 @@
 export interface ResetPasswordEmailModel {
-  email: string
   id: string
+  email: string
+  accessToken: string
 }
 export interface ResetPasswordEmail {
   reset: (email: string) => Promise< ResetPasswordEmailModel | null>
