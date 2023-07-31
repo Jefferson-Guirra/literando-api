@@ -78,6 +78,12 @@ describe('DbREsetPasswordEmail', () => {
     await sut.reset('any_email@mail.com')
     expect(encryptSpy).toBeCalledWith('any_id')
   })
+  test('should return throw if encrypter fails', async () => {
+    const { sut, encrypterStub } = makeSut()
+    jest.spyOn(encrypterStub, 'encrypt').mockReturnValueOnce(Promise.reject(new Error('')))
+    const promise = sut.reset('any_email@mail.com')
+    await expect(promise).rejects.toThrow()
+  })
   test('should call sendMessage with correct email', async () => {
     const { sut, sendMessageStub } = makeSut()
     const sendEmailSpy = jest.spyOn(sendMessageStub, 'sendEmail')
