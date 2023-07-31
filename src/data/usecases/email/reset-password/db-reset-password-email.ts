@@ -38,8 +38,8 @@ export class DbResetPasswordEmail implements ResetPasswordEmail {
       const addREquest = await this.addRequest.add(email, token)
 
       if (addREquest) {
-        const { accessToken: newToken } = addREquest
-        accessToken = newToken
+        const { accessToken: token } = addREquest
+        accessToken = token
       }
     }
 
