@@ -30,4 +30,11 @@ describe('NodemailerAdapter', () => {
     await sut.sendEmail('any_email@mail.com')
     expect(activeSpy).toHaveBeenCalledWith('any_email@mail.com')
   })
+
+  test('should return throw if nodemailerTransporter fails', async () => {
+    const { sut, nodemailerTransporterStub } = makeSut()
+    jest.spyOn(nodemailerTransporterStub, 'active').mockReturnValueOnce(Promise.reject(new Error('')))
+    const promise = sut.sendEmail('any_email@mail.com')
+    await expect(promise).rejects.toThrow()
+  })
 })
