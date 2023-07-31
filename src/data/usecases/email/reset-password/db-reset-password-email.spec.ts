@@ -128,11 +128,17 @@ describe('DbREsetPasswordEmail', () => {
     await sut.reset('any_email@mail.com')
     expect(findSpy).toBeCalledWith('any_email@mail.com')
   })
-  test('should  call updateResetPasswordTokenRepository call with correct email', async () => {
+  test('should  call updateResetPasswordTokenRepository with correct email', async () => {
     const { sut, updateResetPasswordTokenStub } = makeSut()
     const updateSpy = jest.spyOn(updateResetPasswordTokenStub, 'update')
     await sut.reset('any_email@mail.com')
     expect(updateSpy).toBeCalledWith('any_email@mail.com', 'hashed_token')
+  })
+  test('should return throw updateResetPasswordTokenRepository fails', async () => {
+    const { sut, updateResetPasswordTokenStub } = makeSut()
+    jest.spyOn(updateResetPasswordTokenStub, 'update').mockReturnValueOnce(Promise.reject(new Error()))
+    const promise = sut.reset('any_email@mail.com')
+    await expect(promise).rejects.toThrow()
   })
   test('should call sendMessage with correct email', async () => {
     const { sut, sendMessageStub } = makeSut()
