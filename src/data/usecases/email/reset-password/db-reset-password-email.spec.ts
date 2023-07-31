@@ -1,8 +1,17 @@
 import { AccountModel } from '../../../../domain/models/account/account'
+import { Encrypter } from '../../../protocols/criptography/encrypter'
 import { LoadAccountByEmailRepository } from '../../../protocols/db/account/load-account-by-email-repository'
 import { SendMessage } from '../../../protocols/email/send-message'
 import { DbResetPasswordEmail } from './db-reset-password-email'
 
+const makeEncrypterStub = (): Encrypter => {
+  class EncrypterStub implements Encrypter {
+    async encrypt (value: string): Promise<string> {
+      return await Promise.resolve(' hashed_token')
+    }
+  }
+  return new EncrypterStub()
+}
 const makeSendMessageStub = (): SendMessage => {
   class SendMessageStub implements SendMessage {
     async sendEmail (email: string): Promise<void> {
@@ -25,16 +34,19 @@ const makeLoadAccountStub = (): LoadAccountByEmailRepository => {
   return new LoadAccountByEmailRepositoryStub()
 }
 interface SUtTypes {
+  encrypterStub: Encrypter
   sendMessageStub: SendMessage
   loadAccountStub: LoadAccountByEmailRepository
   sut: DbResetPasswordEmail
 }
 
 const makeSut = (): SUtTypes => {
+  const encrypterStub = makeEncrypterStub()
   const sendMessageStub = makeSendMessageStub()
   const loadAccountStub = makeLoadAccountStub()
-  const sut = new DbResetPasswordEmail(loadAccountStub, sendMessageStub)
+  const sut = new DbResetPasswordEmail(loadAccountStub, sendMessageStub, encrypterStub)
   return {
+    encrypterStub,
     sendMessageStub,
     loadAccountStub,
     sut
@@ -59,6 +71,12 @@ describe('DbREsetPasswordEmail', () => {
     jest.spyOn(loadAccountStub, 'loadByEmail').mockReturnValueOnce(Promise.resolve(null))
     const response = await sut.reset('any_email@mail.com')
     expect(response).toBeFalsy()
+  })
+  test('should call encrypter with correct value', async () => {
+    const { sut, encrypterStub } = makeSut()
+    const encryptSpy = jest.spyOn(encrypterStub, 'encrypt')
+    await sut.reset('any_email@mail.com')
+    expect(encryptSpy).toBeCalledWith('any_id')
   })
   test('should call sendMessage with correct email', async () => {
     const { sut, sendMessageStub } = makeSut()
