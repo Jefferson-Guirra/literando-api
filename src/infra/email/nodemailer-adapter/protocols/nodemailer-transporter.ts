@@ -1,3 +1,5 @@
+import { MailOptions } from 'nodemailer/lib/sendmail-transport'
+
 export interface NodemailerTransporter {
-  active: (email: string) => Promise<void>
+  active: (message: MailOptions) => Promise<void>
 }
