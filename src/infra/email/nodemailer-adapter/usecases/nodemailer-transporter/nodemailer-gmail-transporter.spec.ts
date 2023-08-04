@@ -1,10 +1,19 @@
 import { GetOauthAccessToken } from '../../protocols/get-oauth-access-token'
 import { GmailData, NodemailerGmailTransporter } from './nodemailer-gmail-transporter'
+import { MailOptions } from 'nodemailer/lib/sendmail-transport'
+
+const makeResetPasswordMessageStub = (): MailOptions => ({
+  from: 'any_service_email@mail.com',
+  to: 'any_email@mail.com',
+  subject: 'Solicitação de mudança de senha para o usuàrio any_username',
+  html: '<div><h2>Literando - Mudança de senha</h2><p>Clique no link a seguir para mudar a senha</p><p >any_url/ResetPassword/any_access_token</p><p>link válido por 60 segundos.</p></div>'
+})
 
 const makeTransporterPropsStub = (): GmailData => ({
   clientId: 'any_id',
   clientSecret: 'any_key',
-  refreshToken: 'any_token'
+  refreshToken: 'any_token',
+  serviceEmail: ' any_email@mail.com'
 })
 const makeGetAccessTokenStub = (): GetOauthAccessToken => {
   class GetOAuthAccessTokenStub implements GetOauthAccessToken {
@@ -32,7 +41,7 @@ describe('NodemailerGmailTransporter', () => {
   test('should return throw if  GetOAuthAccessToken fails', async () => {
     const { sut, getOAuthAccessTokenStub } = makeSut()
     jest.spyOn(getOAuthAccessTokenStub, 'get').mockReturnValueOnce(Promise.reject(new Error('')))
-    const promise = sut.active('any_email@mail.com')
+    const promise = sut.active(makeResetPasswordMessageStub())
     await expect(promise).rejects.toThrow()
   })
 })
