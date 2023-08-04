@@ -1,3 +1,3 @@
 export interface GetOauthAccessToken {
-  get: () => Promise<{ accessToken: string }>
+  get: (clientId: string, clientSecret: string, refreshToken: string) => Promise<{ accessToken: string }>
 }
