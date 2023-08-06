@@ -1,6 +1,8 @@
 import { GetOauthAccessToken } from '../../protocols/get-oauth-access-token'
 import { GmailData, NodemailerGmailTransporter } from './nodemailer-gmail-transporter'
 import { MailOptions } from 'nodemailer/lib/sendmail-transport'
+import nodemailer from 'nodemailer'
+import SMTPConnection from 'nodemailer/lib/smtp-connection'
 
 const makeResetPasswordMessageStub = (): MailOptions => ({
   from: 'any_service_email@mail.com',
@@ -13,12 +15,12 @@ const makeTransporterPropsStub = (): GmailData => ({
   clientId: 'any_id',
   clientSecret: 'any_key',
   refreshToken: 'any_token',
-  serviceEmail: ' any_email@mail.com'
+  serviceEmail: 'any_email@mail.com'
 })
 const makeGetAccessTokenStub = (): GetOauthAccessToken => {
   class GetOAuthAccessTokenStub implements GetOauthAccessToken {
-    async get (clientId: string, clientSecret: string, refreshToken: string): Promise<{ accessToken: 'any_token' }> {
-      return await Promise.resolve({ accessToken: 'any_token' })
+    async get (clientId: string, clientSecret: string, refreshToken: string): Promise<{ accessToken: string }> {
+      return await Promise.resolve({ accessToken: 'any_access_token' })
     }
   }
   return new GetOAuthAccessTokenStub()
@@ -50,5 +52,19 @@ describe('NodemailerGmailTransporter', () => {
     jest.spyOn(getOAuthAccessTokenStub, 'get').mockReturnValueOnce(Promise.reject(new Error('')))
     const promise = sut.active(makeResetPasswordMessageStub())
     await expect(promise).rejects.toThrow()
+  })
+  test('should call createTransporter with correct values', async () => {
+    const { sut } = makeSut()
+    const authStub: SMTPConnection.AuthenticationTypeOAuth2 = {
+      type: 'OAuth2',
+      user: 'any_email@mail.com',
+      clientId: 'any_id',
+      clientSecret: 'any_key',
+      refreshToken: 'any_token',
+      accessToken: 'any_access_token'
+    }
+    const createSPy = jest.spyOn(nodemailer, 'createTransport')
+    await sut.active(makeResetPasswordMessageStub())
+    expect(createSPy).toHaveBeenCalledWith({ service: 'gmail', auth: authStub })
   })
 })
