@@ -67,4 +67,10 @@ describe('NodemailerGmailTransporter', () => {
     await sut.active(makeResetPasswordMessageStub())
     expect(createSPy).toHaveBeenCalledWith({ service: 'gmail', auth: authStub })
   })
+  test('should return throw if createTransporter fails', async () => {
+    const { sut } = makeSut()
+    jest.spyOn(nodemailer, 'createTransport').mockImplementationOnce(() => { throw new Error('') })
+    const promise = sut.active(makeResetPasswordMessageStub())
+    await expect(promise).rejects.toThrow()
+  })
 })
