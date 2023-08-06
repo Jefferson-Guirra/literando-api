@@ -4,6 +4,13 @@ import { MailOptions } from 'nodemailer/lib/sendmail-transport'
 import nodemailer from 'nodemailer'
 import SMTPConnection from 'nodemailer/lib/smtp-connection'
 
+const sendMailMock = jest.fn()
+jest.mock('nodemailer', () => ({
+  createTransport: jest.fn().mockImplementation(() => ({
+    sendMail: sendMailMock
+  }))
+}))
+
 const makeResetPasswordMessageStub = (): MailOptions => ({
   from: 'any_service_email@mail.com',
   to: 'any_email@mail.com',
@@ -19,7 +26,7 @@ const makeTransporterPropsStub = (): GmailData => ({
 })
 const makeGetAccessTokenStub = (): GetOauthAccessToken => {
   class GetOAuthAccessTokenStub implements GetOauthAccessToken {
-    async get (clientId: string, clientSecret: string, refreshToken: string): Promise<{ accessToken: string }> {
+    async getToken (clientId: string, clientSecret: string, refreshToken: string): Promise<{ accessToken: string }> {
       return await Promise.resolve({ accessToken: 'any_access_token' })
     }
   }
@@ -42,14 +49,14 @@ const makeSut = (): SutTypes => {
 describe('NodemailerGmailTransporter', () => {
   test('should call getAccessToken with correct values)', async () => {
     const { sut, getOAuthAccessTokenStub } = makeSut()
-    const getSpy = jest.spyOn(getOAuthAccessTokenStub, 'get')
+    const getSpy = jest.spyOn(getOAuthAccessTokenStub, 'getToken')
     await sut.active(makeResetPasswordMessageStub())
     expect(getSpy).toHaveBeenCalledWith('any_id', 'any_key', 'any_token')
   })
 
   test('should return throw if  GetOAuthAccessToken fails', async () => {
     const { sut, getOAuthAccessTokenStub } = makeSut()
-    jest.spyOn(getOAuthAccessTokenStub, 'get').mockReturnValueOnce(Promise.reject(new Error('')))
+    jest.spyOn(getOAuthAccessTokenStub, 'getToken').mockReturnValueOnce(Promise.reject(new Error('')))
     const promise = sut.active(makeResetPasswordMessageStub())
     await expect(promise).rejects.toThrow()
   })

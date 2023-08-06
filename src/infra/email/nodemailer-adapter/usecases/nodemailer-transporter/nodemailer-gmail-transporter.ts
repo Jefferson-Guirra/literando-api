@@ -14,7 +14,7 @@ export interface GmailData {
 export class NodemailerGmailTransporter implements NodemailerTransporter {
   constructor (private readonly gmail: GmailData, private readonly getAccessToken: GetOauthAccessToken) {}
   async active (message: MailOptions): Promise<void> {
-    const { accessToken } = await this.getAccessToken.get(this.gmail.clientId, this.gmail.clientSecret, this.gmail.refreshToken)
+    const { accessToken } = await this.getAccessToken.getToken(this.gmail.clientId, this.gmail.clientSecret, this.gmail.refreshToken)
     const auth: SMTPConnection.AuthenticationTypeOAuth2 = {
       type: 'OAuth2',
       user: this.gmail.serviceEmail,
@@ -23,9 +23,10 @@ export class NodemailerGmailTransporter implements NodemailerTransporter {
       refreshToken: this.gmail.refreshToken,
       accessToken
     }
-    nodemailer.createTransport({
+    const transport = nodemailer.createTransport({
       service: 'gmail',
       auth
     })
+    await transport.sendMail(message)
   }
 }
