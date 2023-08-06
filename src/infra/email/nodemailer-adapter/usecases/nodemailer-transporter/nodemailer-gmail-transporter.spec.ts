@@ -47,6 +47,9 @@ const makeSut = (): SutTypes => {
 }
 
 describe('NodemailerGmailTransporter', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
   test('should call getAccessToken with correct values)', async () => {
     const { sut, getOAuthAccessTokenStub } = makeSut()
     const getSpy = jest.spyOn(getOAuthAccessTokenStub, 'getToken')
@@ -79,5 +82,11 @@ describe('NodemailerGmailTransporter', () => {
     jest.spyOn(nodemailer, 'createTransport').mockImplementationOnce(() => { throw new Error('') })
     const promise = sut.active(makeResetPasswordMessageStub())
     await expect(promise).rejects.toThrow()
+  })
+  test('should call sendMail with correct values', async () => {
+    const { sut } = makeSut()
+    await sut.active(makeResetPasswordMessageStub())
+    expect(sendMailMock).toHaveBeenCalledTimes(1)
+    expect(sendMailMock).toHaveBeenCalledWith(makeResetPasswordMessageStub())
   })
 })
