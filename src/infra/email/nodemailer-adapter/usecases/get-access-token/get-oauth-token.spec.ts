@@ -18,4 +18,9 @@ describe('GetOauthToken', () => {
     const promise = sut.getToken(env.googleClientId as string, 'any_key', env.googleRefreshToken as string)
     await expect(promise).rejects.toThrow()
   })
+  test('should return throw if invalid refresh token provided', async () => {
+    const sut = new GetOauthToken()
+    const promise = sut.getToken(env.googleClientId as string, env.googleSecret as string, 'any_token')
+    await expect(promise).rejects.toThrow()
+  })
 })
