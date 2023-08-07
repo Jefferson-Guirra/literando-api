@@ -89,4 +89,14 @@ describe('NodemailerGmailTransporter', () => {
     expect(sendMailMock).toHaveBeenCalledTimes(1)
     expect(sendMailMock).toHaveBeenCalledWith(makeResetPasswordMessageStub())
   })
+  test('should return throw if sendMail fails', async () => {
+    const { sut } = makeSut()
+    jest.spyOn(nodemailer, 'createTransport').mockReturnValue({
+      createTransport: jest.fn().mockReturnValue({
+        sendMail: jest.fn().mockReturnValue((mailoptions: any, callback: any) => { throw new Error('') })
+      })
+    } as any)
+    const response = sut.active(makeResetPasswordMessageStub())
+    await expect(response).rejects.toThrow()
+  })
 })
