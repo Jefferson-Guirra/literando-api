@@ -37,4 +37,9 @@ describe('ResetPasswordAccountRepository', () => {
     expect(response?.email).toBe('any_email@mail.com')
     expect(response?.accessToken).toBe('any_token')
   })
+  test('should return nul if GetResetPasswordRequestRepository return null', async () => {
+    const sut = makeSut()
+    const response = await sut.find('any_email@mail.com')
+    expect(response).toBeFalsy()
+  })
 })
