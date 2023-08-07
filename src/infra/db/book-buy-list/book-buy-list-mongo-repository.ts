@@ -52,16 +52,16 @@ implements
   async updateAmount (book: AddBuyBookModel): Promise<AddBuyBookModel | null> {
     const { queryDoc } = book
     const buyBookCollection = await MongoHelper.getCollection('buyBooksList')
-    await buyBookCollection.updateOne(
-      { queryDoc: book.queryDoc },
+    const updateBook = await buyBookCollection.findOneAndUpdate(
+      { queryDoc },
       {
         $set: {
           amount: book.amount + 1
         }
-      }
+      },
+      { returnDocument: 'after' }
     )
-    const updateAmountBook = await buyBookCollection.findOne({ queryDoc })
-    return updateAmountBook && MongoHelper.Map(updateAmountBook)
+    return updateBook.value && MongoHelper.Map(updateBook.value)
   }
 
   async removeAmountBook (
@@ -69,16 +69,16 @@ implements
   ): Promise<AddBuyBookModel | null> {
     const { queryDoc } = book
     const buyBooksCollection = await MongoHelper.getCollection('buyBooksList')
-    await buyBooksCollection.updateOne(
+    const removeAmountBook = await buyBooksCollection.findOneAndUpdate(
       { queryDoc },
       {
         $set: {
           amount: book.amount - 1
         }
-      }
+      },
+      { returnDocument: 'after' }
     )
-    const removeBookAmount = await buyBooksCollection.findOne({ queryDoc })
-    return removeBookAmount && MongoHelper.Map(removeBookAmount)
+    return removeAmountBook.value && MongoHelper.Map(removeAmountBook.value)
   }
 
   async getBuyBooks (userId: string): Promise<AddBuyBookModel[] | null> {
@@ -93,9 +93,8 @@ implements
     bookId: string
   ): Promise<AddBuyBookModel | null> {
     const buyBookCollection = await MongoHelper.getCollection('buyBooksList')
-    const book = await buyBookCollection.findOne({ queryDoc: userId + bookId })
-    await buyBookCollection.deleteOne({ queryDoc: userId + bookId })
-    return book && MongoHelper.Map(book)
+    const book = await buyBookCollection.findOneAndDelete({ queryDoc: userId + bookId })
+    return book.value && MongoHelper.Map(book.value)
   }
 
   async addAmount (
@@ -103,18 +102,16 @@ implements
     amount: number
   ): Promise<AddBuyBookModel | null> {
     const buyBookCollection = await MongoHelper.getCollection('buyBooksList')
-    await buyBookCollection.updateOne(
+    const addAmountBook = await buyBookCollection.findOneAndUpdate(
       { queryDoc: book.queryDoc },
       {
         $set: {
           amount
         }
-      }
+      },
+      { returnDocument: 'after' }
     )
-    const findBook = await buyBookCollection.findOne({
-      queryDoc: book.queryDoc
-    })
-    return findBook && MongoHelper.Map(findBook)
+    return addAmountBook.value && MongoHelper.Map(addAmountBook.value)
   }
 
   async deleteAllBooks (userId: string): Promise<void> {
