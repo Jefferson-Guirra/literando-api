@@ -1,0 +1,31 @@
+import { Collection } from 'mongodb'
+import { MongoHelper } from '../helpers/mongo-helper'
+import { ResetPasswordAccountRepository } from './reset-password-account-repository'
+
+let resetPasswordAccountsCollection: Collection
+const makeSut = (): ResetPasswordAccountRepository => new ResetPasswordAccountRepository()
+
+describe('ResetPasswordAccountRepository', () => {
+  beforeAll(async () => {
+    await MongoHelper.connect(process.env.MONGO_URL as string)
+  })
+  beforeEach(async () => {
+    resetPasswordAccountsCollection = await MongoHelper.getCollection('resetPasswordAccounts')
+    await resetPasswordAccountsCollection.deleteMany({})
+  })
+  afterAll(async () => {
+    await MongoHelper.disconnect()
+  })
+  test('should return data account if add success', async () => {
+    const sut = makeSut()
+    let count = await resetPasswordAccountsCollection.countDocuments()
+    expect(count).toBe(0)
+    const response = await sut.add('any_email@mail.com', 'any_token')
+    count = await resetPasswordAccountsCollection.countDocuments()
+    expect(count).toBe(1)
+    expect(response).toBeTruthy()
+    expect(response?.id).toBeTruthy()
+    expect(response?.email).toBe('any_email@mail.com')
+    expect(response?.accessToken).toBe('any_token')
+  })
+})
