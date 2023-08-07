@@ -6,5 +6,5 @@ export default {
   jwtSecret: process.env.JWT_SECRET || 'rjlkm856LjCvAe158WKl-=ER=Kmnw/',
   googleClientId: process.env.GOOGLE_CLIENT_ID,
   googleSecret: process.env.GOOGLE_SECRET,
-  googleRefreshToken: process.env.REFRESH_TOKEN
+  googleRefreshToken: process.env.GOOGLE_REFRESH_TOKEN
 }
