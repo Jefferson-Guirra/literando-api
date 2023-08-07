@@ -6,7 +6,7 @@ const makeResetPasswordMessageStub = (): MailOptions => ({
   from: 'any_service_email@mail.com',
   to: 'any_email@mail.com',
   subject: 'Solicitação de mudança de senha para o usuàrio any_username',
-  html: '<div><h2>Literando - Mudança de senha</h2><p>Clique no link a seguir para mudar a senha</p><p>any_app_url/ResetPassword/any_token</p><p>link válido por 60 segundos.</p></div>'
+  html: '<div><h2>Literando - Mudança de senha</h2><p>Clique no link a seguir para mudar a senha</p><p>any_app_url/ResetPassword/any_token</p></div>'
 })
 const makeTransporterStub = (): NodemailerTransporter => {
   class NodemailerTransporterStub implements NodemailerTransporter {

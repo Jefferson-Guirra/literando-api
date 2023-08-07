@@ -7,7 +7,7 @@ export const GenerateEmailMessage = {
       from: serviceEmail,
       to: userEmail,
       subject: `Solicitação de mudança de senha para o usuàrio ${username}`,
-      html: `<div><h2>Literando - Mudança de senha</h2><p>Clique no link a seguir para mudar a senha</p><p>${redirectUrl}</p><p>link válido por 60 segundos.</p></div>`
+      html: `<div><h2>Literando - Mudança de senha</h2><p>Clique no link a seguir para mudar a senha</p><p>${redirectUrl}</p></div>`
     }
   }
 }
