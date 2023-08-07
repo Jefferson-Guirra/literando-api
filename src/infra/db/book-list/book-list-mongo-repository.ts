@@ -38,9 +38,8 @@ implements
 
   async remove (userId: string, bookId: string): Promise<AddBookModel | null> {
     const bookCollection = await MongoHelper.getCollection('bookList')
-    const book = await bookCollection.findOne({ queryDoc: userId + bookId })
-    await bookCollection.deleteOne({ queryDoc: userId + bookId })
-    return book && MongoHelper.Map(book)
+    const deleteBook = await bookCollection.findOneAndDelete({ queryDoc: userId + bookId })
+    return deleteBook.value && MongoHelper.Map(deleteBook.value)
   }
 
   async getBooks (userId: string): Promise<AddBookModel[] | null> {
