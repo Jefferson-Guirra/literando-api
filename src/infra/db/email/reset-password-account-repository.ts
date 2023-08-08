@@ -1,11 +1,13 @@
 import { AddResetPasswordRequestRepository } from '../../../data/protocols/db/email/add-reset-password-request-repository'
+import { LoadResetPasswordRequestByAccessTokenRepository } from '../../../data/protocols/db/email/load-reset-password-request-by-access-token-repository'
 import { LoadResetPasswordRequestByEmailRepository, ResetPasswordRequestModel } from '../../../data/protocols/db/email/load-reset-password-request-by-email-repository'
 import { UpdateResetPasswordTokenRepository } from '../../../data/protocols/db/email/update-reset-password-token-repository'
 import { MongoHelper } from '../helpers/mongo-helper'
 
 export class ResetPasswordAccountRepository implements AddResetPasswordRequestRepository,
 LoadResetPasswordRequestByEmailRepository,
-UpdateResetPasswordTokenRepository {
+UpdateResetPasswordTokenRepository,
+LoadResetPasswordRequestByAccessTokenRepository {
   async add (email: string, accessToken: string): Promise<ResetPasswordRequestModel | null> {
     const resetCollection = await MongoHelper.getCollection('resetPasswordAccounts')
     const result = await resetCollection.insertOne({ email, accessToken })
@@ -30,5 +32,11 @@ UpdateResetPasswordTokenRepository {
     { returnDocument: 'after' })
 
     return doc.value && MongoHelper.Map(doc.value)
+  }
+
+  async loadRequestByAccessToken (accessToken: string): Promise<ResetPasswordRequestModel | null> {
+    const requestsCollection = await MongoHelper.getCollection('resetPasswordAccounts')
+    const request = await requestsCollection.findOne({ accessToken })
+    return request && MongoHelper.Map(request)
   }
 }
