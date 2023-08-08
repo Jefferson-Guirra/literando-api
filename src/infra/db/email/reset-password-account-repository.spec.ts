@@ -61,4 +61,13 @@ describe('ResetPasswordAccountRepository', () => {
     const response = await sut.loadRequestByAccessToken('any_token')
     expect(response).toBeFalsy()
   })
+  test('should return account data on succeeds', async () => {
+    const sut = makeSut()
+    await resetPasswordAccountsCollection.insertOne({ email: 'any_email@mail.com', accessToken: 'any_token' })
+    const response = await sut.loadRequestByAccessToken('any_token')
+    expect(response).toBeTruthy()
+    expect(response?.id).toBeTruthy()
+    expect(response?.email).toBe('any_email@mail.com')
+    expect(response?.accessToken).toBe('any_token')
+  })
 })
