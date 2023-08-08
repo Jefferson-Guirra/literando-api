@@ -21,7 +21,7 @@ export class VerifyResetPasswordTokenController implements Controller {
       if (!isValid) {
         return unauthorized()
       }
-      return ok('success')
+      return ok({ ok: isValid, message: 'token is valid.' })
     } catch (err) {
       return serverError(err as Error)
     }
