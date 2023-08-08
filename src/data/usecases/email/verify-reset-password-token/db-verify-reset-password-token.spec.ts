@@ -35,4 +35,10 @@ describe('DbVerifyResetPasswordToken', () => {
     await sut.verifyResetPasswordToken('any_token')
     expect(loadSpy).toHaveBeenCalledWith('any_token')
   })
+  test('should return throw if loadRequestBeyAccessToken fails', async () => {
+    const { sut, loadRequestByAccessTokenStub } = makeSut()
+    jest.spyOn(loadRequestByAccessTokenStub, 'loadRequestByAccessToken').mockReturnValueOnce(Promise.reject(new Error('')))
+    const promise = sut.verifyResetPasswordToken('any_token')
+    await expect(promise).rejects.toThrow()
+  })
 })
