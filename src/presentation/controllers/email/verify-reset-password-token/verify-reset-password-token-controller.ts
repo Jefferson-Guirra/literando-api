@@ -1,5 +1,5 @@
 import { VerifyResetPasswordToken } from '../../../../domain/usecases/email/verify-reset-password-token'
-import { badRequest, ok } from '../../../helpers/http/http'
+import { badRequest, ok, unauthorized } from '../../../helpers/http/http'
 import { Controller } from '../../../protocols/controller'
 import { HttpRequest, HttpResponse } from '../../../protocols/http'
 import { Validation } from '../../../protocols/validate'
@@ -16,7 +16,10 @@ export class VerifyResetPasswordTokenController implements Controller {
       return badRequest(error)
     }
     const { accessToken } = httpRequest.body
-    await this.verifyToken.verifyResetPasswordToken(accessToken)
+    const isValid = await this.verifyToken.verifyResetPasswordToken(accessToken)
+    if (!isValid) {
+      return unauthorized()
+    }
     return ok('success')
   }
 }
