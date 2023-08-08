@@ -1,6 +1,6 @@
 import { VerifyResetPasswordToken } from '../../../../domain/usecases/email/verify-reset-password-token'
 import { MissingParamError } from '../../../errors/missing-params-error'
-import { badRequest } from '../../../helpers/http/http'
+import { badRequest, unauthorized } from '../../../helpers/http/http'
 import { HttpRequest } from '../../../protocols/http'
 import { Validation } from '../../../protocols/validate'
 import { VerifyResetPasswordTokenController } from './verify-reset-password-token-controller'
@@ -63,5 +63,11 @@ describe('VerifyResetPasswordTokenController', () => {
     const verifySpy = jest.spyOn(verifyTokenStub, 'verifyResetPasswordToken')
     await sut.handle(makeFakeRequest())
     expect(verifySpy).toHaveBeenCalledWith('any_token')
+  })
+  test('should return 401 if verifyResetPasswordToken return false', async () => {
+    const { sut, verifyTokenStub } = makeSut()
+    jest.spyOn(verifyTokenStub, 'verifyResetPasswordToken').mockReturnValueOnce(Promise.resolve(false))
+    const response = await sut.handle(makeFakeRequest())
+    expect(response).toEqual(unauthorized())
   })
 })
