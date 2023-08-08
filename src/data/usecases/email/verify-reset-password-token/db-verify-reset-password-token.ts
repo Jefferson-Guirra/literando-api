@@ -4,7 +4,7 @@ import { LoadResetPasswordRequestByAccessTokenRepository } from '../../../protoc
 export class DbVerifyResetPasswordToken implements VerifyResetPasswordToken {
   constructor (private readonly loadRequest: LoadResetPasswordRequestByAccessTokenRepository) {}
   async verifyResetPasswordToken (accessToken: string): Promise<boolean> {
-    await this.loadRequest.loadRequestByAccessToken(accessToken)
-    return false
+    const request = await this.loadRequest.loadRequestByAccessToken(accessToken)
+    return !!request
   }
 }
