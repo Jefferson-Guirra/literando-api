@@ -9,6 +9,8 @@ import env from '../../../config/env'
 import { Controller } from '../../../../presentation/protocols/controller'
 import { GmailData, NodemailerGmailTransporter } from '../../../../infra/email/nodemailer-adapter/usecases/nodemailer-transporter/nodemailer-gmail-transporter'
 import { GetOauthToken } from '../../../../infra/email/nodemailer-adapter/usecases/get-access-token/get-oauth-token'
+import { LogMongoRepository } from '../../../../infra/db/log/log-mongo-repository'
+import { LogControllerDecorator } from '../../../decorators/log-controller-decorator'
 
 const gmailData: GmailData = {
   serviceEmail: env.serviceEmail,
@@ -32,5 +34,7 @@ export const makeResetPasswordEmailController = (): Controller => {
     resetPasswordAccountRepository,
     resetPasswordAccountRepository,
     resetPasswordAccountRepository)
-  return new ResetPasswordEmailController(validator, dbResetPasswordEmail)
+  const logMongoRepository = new LogMongoRepository()
+  const resetPasswordEmailController = new ResetPasswordEmailController(validator, dbResetPasswordEmail)
+  return new LogControllerDecorator(resetPasswordEmailController, logMongoRepository)
 }
