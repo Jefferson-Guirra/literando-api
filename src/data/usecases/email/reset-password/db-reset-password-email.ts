@@ -2,7 +2,7 @@ import { ResetPasswordEmail, ResetPasswordEmailModel } from '../../../../domain/
 import { Encrypter } from '../../../protocols/criptography/encrypter'
 import { LoadAccountByEmailRepository } from '../../../protocols/db/account/load-account-by-email-repository'
 import { AddResetPasswordRequestRepository } from '../../../protocols/db/email/add-reset-password-request-repository'
-import { GetResetPasswordRequestRepository } from '../../../protocols/db/email/get-reset-password-request-repository'
+import { LoadResetPasswordRequestByEmailRepository } from '../../../protocols/db/email/load-reset-password-request-by-email-repository'
 import { UpdateResetPasswordTokenRepository } from '../../../protocols/db/email/update-reset-password-token-repository'
 import { SendResetPasswordMessage } from '../../../protocols/email/send-reset-password-message'
 
@@ -11,7 +11,7 @@ export class DbResetPasswordEmail implements ResetPasswordEmail {
     private readonly loadAccount: LoadAccountByEmailRepository,
     private readonly sendMessage: SendResetPasswordMessage,
     private readonly encrypter: Encrypter,
-    private readonly getRequest: GetResetPasswordRequestRepository,
+    private readonly loadRequest: LoadResetPasswordRequestByEmailRepository,
     private readonly updateAccessToken: UpdateResetPasswordTokenRepository,
     private readonly addRequest: AddResetPasswordRequestRepository
 
@@ -24,7 +24,7 @@ export class DbResetPasswordEmail implements ResetPasswordEmail {
     }
     const { id, username } = account
     const token = await this.encrypter.encrypt(id)
-    const request = await this.getRequest.find(email)
+    const request = await this.loadRequest.loadRequestByEmail(email)
     let accessToken = ''
 
     if (request) {
