@@ -1,3 +1,4 @@
+import { VerifyResetPasswordToken } from '../../../../domain/usecases/email/verify-reset-password-token'
 import { MissingParamError } from '../../../errors/missing-params-error'
 import { badRequest } from '../../../helpers/http/http'
 import { HttpRequest } from '../../../protocols/http'
@@ -10,6 +11,14 @@ const makeFakeRequest = (): HttpRequest => ({
   }
 })
 
+const makeVerifyTokenStub = (): VerifyResetPasswordToken => {
+  class VerifyResetPasswordTokenStub implements VerifyResetPasswordToken {
+    async verifyResetPasswordToken (accessToken: string): Promise<boolean> {
+      return await Promise.resolve(true)
+    }
+  }
+  return new VerifyResetPasswordTokenStub()
+}
 const makeValidatorStub = (): Validation => {
   class ValidatorStub implements Validation {
     validation (input: any): Error | undefined {
@@ -20,14 +29,17 @@ const makeValidatorStub = (): Validation => {
 }
 
 interface SutTypes {
+  verifyTokenStub: VerifyResetPasswordToken
   validatorStub: Validation
   sut: VerifyResetPasswordTokenController
 }
 
 const makeSut = (): SutTypes => {
+  const verifyTokenStub = makeVerifyTokenStub()
   const validatorStub = makeValidatorStub()
-  const sut = new VerifyResetPasswordTokenController(validatorStub)
+  const sut = new VerifyResetPasswordTokenController(validatorStub, verifyTokenStub)
   return {
+    verifyTokenStub,
     validatorStub,
     sut
   }
@@ -45,5 +57,11 @@ describe('VerifyResetPasswordTokenController', () => {
     jest.spyOn(validatorStub, 'validation').mockReturnValueOnce(new MissingParamError('any_field'))
     const response = await sut.handle(makeFakeRequest())
     expect(response).toEqual(badRequest(new MissingParamError('any_field')))
+  })
+  test('should call verifyResetPasswordToken with correct token', async () => {
+    const { sut, verifyTokenStub } = makeSut()
+    const verifySpy = jest.spyOn(verifyTokenStub, 'verifyResetPasswordToken')
+    await sut.handle(makeFakeRequest())
+    expect(verifySpy).toHaveBeenCalledWith('any_token')
   })
 })
