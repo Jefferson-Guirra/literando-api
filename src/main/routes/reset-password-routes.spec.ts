@@ -4,6 +4,7 @@ import { MongoHelper } from '../../infra/db/helpers/mongo-helper'
 import app from '../config/app'
 
 let accountsCollection: Collection
+let requestsCollection: Collection
 describe('POST /send-reset-password-message', () => {
   beforeAll(async () => {
     await MongoHelper.connect(process.env.MONGO_URL as string)
@@ -33,13 +34,17 @@ describe('POST /verify-reset-password-token', () => {
     await MongoHelper.connect(process.env.MONGO_URL as string)
   })
   beforeEach(async () => {
-    accountsCollection = await MongoHelper.getCollection('accounts')
-    await accountsCollection.deleteMany({})
+    requestsCollection = await MongoHelper.getCollection('resetPasswordAccounts')
+    await requestsCollection.deleteMany({})
   })
   afterAll(async () => {
     await MongoHelper.disconnect()
   })
   test('should return 401 if verify fails', async () => {
     await request(app).post('/api/verify-reset-password-token').send({ accessToken: 'any_token' }).expect(401)
+  })
+  test('should return 200 on succeeds', async () => {
+    await requestsCollection.insertOne({ email: 'any_email@mail.com', accessToken: 'any_token' })
+    await request(app).post('/api/verify-reset-password-token').send({ accessToken: 'any_token' }).expect(200)
   })
 })
