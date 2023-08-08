@@ -1,6 +1,6 @@
 import { VerifyResetPasswordToken } from '../../../../domain/usecases/email/verify-reset-password-token'
 import { MissingParamError } from '../../../errors/missing-params-error'
-import { badRequest, unauthorized } from '../../../helpers/http/http'
+import { badRequest, ok, serverError, unauthorized } from '../../../helpers/http/http'
 import { HttpRequest } from '../../../protocols/http'
 import { Validation } from '../../../protocols/validate'
 import { VerifyResetPasswordTokenController } from './verify-reset-password-token-controller'
@@ -69,5 +69,16 @@ describe('VerifyResetPasswordTokenController', () => {
     jest.spyOn(verifyTokenStub, 'verifyResetPasswordToken').mockReturnValueOnce(Promise.resolve(false))
     const response = await sut.handle(makeFakeRequest())
     expect(response).toEqual(unauthorized())
+  })
+  test('should return 500 if verifyResetPasswordToken fails', async () => {
+    const { sut, verifyTokenStub } = makeSut()
+    jest.spyOn(verifyTokenStub, 'verifyResetPasswordToken').mockReturnValueOnce(Promise.reject(new Error('')))
+    const response = await sut.handle(makeFakeRequest())
+    expect(response).toEqual(serverError())
+  })
+  test('should return 200 on succeeds', async () => {
+    const { sut } = makeSut()
+    const response = await sut.handle(makeFakeRequest())
+    expect(response).toEqual(ok({ ok: true, message: 'token is valid.' }))
   })
 })
