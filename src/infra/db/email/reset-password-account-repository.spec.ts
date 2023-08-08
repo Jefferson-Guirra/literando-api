@@ -56,4 +56,9 @@ describe('ResetPasswordAccountRepository', () => {
     const response = await sut.update('any_email@mail.com', 'random_token')
     expect(response).toBeFalsy()
   })
+  test('should return null if loadRequestByAccessToken return nul', async () => {
+    const sut = makeSut()
+    const response = await sut.loadRequestByAccessToken('any_token')
+    expect(response).toBeFalsy()
+  })
 })
