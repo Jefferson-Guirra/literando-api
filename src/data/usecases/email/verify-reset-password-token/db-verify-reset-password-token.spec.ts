@@ -47,4 +47,9 @@ describe('DbVerifyResetPasswordToken', () => {
     const response = await sut.verifyResetPasswordToken('any_token')
     expect(response).toEqual(false)
   })
+  test('should return true on success', async () => {
+    const { sut } = makeSut()
+    const response = await sut.verifyResetPasswordToken('any_token')
+    expect(response).toEqual(true)
+  })
 })
