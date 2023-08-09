@@ -21,7 +21,10 @@ export class ResetPasswordController implements Controller {
       if (!newPassword) {
         return unauthorized()
       }
-      return ok('success')
+      return ok({
+        ok: true,
+        message: 'reset password success.'
+      })
     } catch (err) {
       return serverError(err as Error)
     }
