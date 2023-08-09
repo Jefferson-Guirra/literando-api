@@ -1,9 +1,17 @@
 import { Hasher } from '../../../protocols/criptography/hasher'
 import { ResetPasswordAccountModel, ResetPasswordAccountRepository } from '../../../protocols/db/account/reset-password-account-repository'
+import { DestroyResetPasswordRequestToken } from '../../../protocols/db/reset-password-request/destroy-reset-passsword-token-request'
 import { LoadResetPasswordRequestByAccessTokenRepository } from '../../../protocols/db/reset-password-request/load-reset-password-request-by-access-token-repository'
 import { ResetPasswordRequestModel } from '../../../protocols/db/reset-password-request/load-reset-password-request-by-email-repository'
 import { DbResetPasswordAccount } from './db-reset-password-account'
 
+const makeDestroyRequestTokenStub = (): DestroyResetPasswordRequestToken => {
+  class DestroyResetPasswordRequestTokenStub implements DestroyResetPasswordRequestToken {
+    async destroyToken (accessToken: string): Promise<void> {
+    }
+  }
+  return new DestroyResetPasswordRequestTokenStub()
+}
 const makeLoadRequestStub = (): LoadResetPasswordRequestByAccessTokenRepository => {
   class LoadResetPasswordRequestByAccessTokenStub implements LoadResetPasswordRequestByAccessTokenRepository {
     async loadRequestByAccessToken (accessToken: string): Promise<ResetPasswordRequestModel | null> {
@@ -41,6 +49,7 @@ const makeHasherStub = (): Hasher => {
 }
 
 interface SutTypes {
+  destroyResetRequestStub: DestroyResetPasswordRequestToken
   resetPasswordAccountRepositoryStub: ResetPasswordAccountRepository
   hasherStub: Hasher
   loadRequestStub: LoadResetPasswordRequestByAccessTokenRepository
@@ -48,11 +57,13 @@ interface SutTypes {
 }
 
 const makeSut = (): SutTypes => {
+  const destroyResetRequestStub = makeDestroyRequestTokenStub()
   const resetPasswordAccountRepositoryStub = makeResetPasswordAccountRepositoryStub()
   const hasherStub = makeHasherStub()
   const loadRequestStub = makeLoadRequestStub()
-  const sut = new DbResetPasswordAccount(loadRequestStub, hasherStub, resetPasswordAccountRepositoryStub)
+  const sut = new DbResetPasswordAccount(loadRequestStub, hasherStub, resetPasswordAccountRepositoryStub, destroyResetRequestStub)
   return {
+    destroyResetRequestStub,
     resetPasswordAccountRepositoryStub,
     hasherStub,
     loadRequestStub,
@@ -102,6 +113,12 @@ describe('DbResetPasswordAccount', () => {
     jest.spyOn(resetPasswordAccountRepositoryStub, 'resetPassword').mockReturnValueOnce(Promise.reject(new Error('')))
     const promise = sut.resetPassword('any_token', 'any_password')
     await expect(promise).rejects.toThrow()
+  })
+  test('should call destroyToken with correct token', async () => {
+    const { sut, destroyResetRequestStub } = makeSut()
+    const destroySpy = jest.spyOn(destroyResetRequestStub, 'destroyToken')
+    await sut.resetPassword('any_token', 'any_password')
+    expect(destroySpy).toHaveBeenCalledWith('any_token')
   })
   test('should return new hashed password on succeeds', async () => {
     const { sut } = makeSut()
