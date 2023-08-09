@@ -12,6 +12,7 @@ import {
 import { RemoveAccessTokenRepository } from '../../../data/protocols/db/account/remove-access-token-repository'
 import { AddNextAuthAccountRepository, AddNextAuthAccountRepositoryModel } from '../../../data/protocols/db/account/add-next-auth-account-repository'
 import { NextAuthAccount } from '../../../domain/models/account/next-auth-account'
+import { ResetPasswordAccountModel, ResetPasswordAccountRepository } from '../../../data/protocols/db/account/reset-password-account-repository'
 
 export class AccountMongoRepository
 implements
@@ -20,7 +21,8 @@ implements
     AddNextAuthAccountRepository,
     UpdateAccessTokenRepository,
     LoadAccountByAccessTokenRepository,
-    RemoveAccessTokenRepository {
+    RemoveAccessTokenRepository,
+    ResetPasswordAccountRepository {
   async loadByEmail (email: string): Promise<AccountModel | null> {
     const accountCollection = await MongoHelper.getCollection('accounts')
     const account = await accountCollection.findOne({ email })
@@ -75,5 +77,18 @@ implements
     const result = await accountsCollection.insertOne(account)
     const newAccount = await accountsCollection.findOne({ _id: result.insertedId })
     return newAccount && MongoHelper.Map(newAccount)
+  }
+
+  async resetPassword (email: string, password: string): Promise<ResetPasswordAccountModel | null> {
+    const accountsCollection = await MongoHelper.getCollection('accounts')
+    const account = await accountsCollection.findOneAndUpdate({ email }, {
+      $set: {
+        password
+      }
+    },
+    {
+      returnDocument: 'after'
+    })
+    return account.value && MongoHelper.Map(account.value)
   }
 }
