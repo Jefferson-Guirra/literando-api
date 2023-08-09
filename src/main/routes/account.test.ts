@@ -6,6 +6,7 @@ import { hash } from 'bcrypt'
 
 let accountCollection: Collection
 let privateRoutesCollection: Collection
+let resetPasswordRequestCollection: Collection
 const insertAccountDatabase = async (): Promise<ObjectId> => {
   const result = await accountCollection.insertOne({
     username: 'any_username',
@@ -188,5 +189,44 @@ describe('Put /logout', () => {
   })
   test('should return 401 if logout fails', async () => {
     await request(app).put('/api/logout').send({ accessToken: 'any_token' }).expect(401)
+  })
+})
+
+describe('PUT /reset-password', () => {
+  beforeAll(async () => {
+    await MongoHelper.connect(process.env.MONGO_URL as string)
+  })
+  afterAll(async () => {
+    await MongoHelper.disconnect()
+  })
+  beforeEach(async () => {
+    resetPasswordRequestCollection = await MongoHelper.getCollection('resetPasswordAccounts')
+    accountCollection = await MongoHelper.getCollection('accounts')
+    await resetPasswordRequestCollection?.deleteMany({})
+    await accountCollection.deleteMany({})
+  })
+  test('should return 200 on succeeds', async () => {
+    await accountCollection.insertOne({
+      username: 'any_username',
+      email: 'any_email@mail.com',
+      password: 'any_password',
+      accessToken: 'any_token'
+    })
+    await resetPasswordRequestCollection.insertOne({
+      email: 'any_email@mail.com',
+      accessToken: 'any_token'
+    })
+    await request(app).put('/api/reset-password').send({
+      accessToken: 'any_token',
+      password: 'any_password',
+      passwordConfirmation: 'any_password'
+    }).expect(200)
+  })
+  test('should return 401 fails', async () => {
+    await request(app).put('/api/reset-password').send({
+      accessToken: 'any_token',
+      password: 'any_password',
+      passwordConfirmation: 'any_password'
+    }).expect(200)
   })
 })
