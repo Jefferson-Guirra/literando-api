@@ -1,7 +1,7 @@
-import { AddResetPasswordRequestRepository } from '../../../data/protocols/db/email/add-reset-password-request-repository'
-import { LoadResetPasswordRequestByAccessTokenRepository } from '../../../data/protocols/db/email/load-reset-password-request-by-access-token-repository'
-import { LoadResetPasswordRequestByEmailRepository, ResetPasswordRequestModel } from '../../../data/protocols/db/email/load-reset-password-request-by-email-repository'
-import { UpdateResetPasswordTokenRepository } from '../../../data/protocols/db/email/update-reset-password-token-repository'
+import { AddResetPasswordRequestRepository } from '../../../data/protocols/db/reset-password-request/add-reset-password-request-repository'
+import { LoadResetPasswordRequestByAccessTokenRepository } from '../../../data/protocols/db/reset-password-request/load-reset-password-request-by-access-token-repository'
+import { LoadResetPasswordRequestByEmailRepository, ResetPasswordRequestModel } from '../../../data/protocols/db/reset-password-request/load-reset-password-request-by-email-repository'
+import { UpdateResetPasswordTokenRepository } from '../../../data/protocols/db/reset-password-request/update-reset-password-token-repository'
 import { MongoHelper } from '../helpers/mongo-helper'
 
 export class ResetPasswordAccountRequestRepository implements AddResetPasswordRequestRepository,
