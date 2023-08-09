@@ -1,6 +1,6 @@
 import { ResetPasswordAccount, ResetPasswordModel } from '../../../../domain/usecases/account/reset-password-account'
 import { MissingParamError } from '../../../errors/missing-params-error'
-import { badRequest } from '../../../helpers/http/http'
+import { badRequest, unauthorized } from '../../../helpers/http/http'
 import { HttpRequest } from '../../../protocols/http'
 import { Validation } from '../../../protocols/validate'
 import { ResetPasswordController } from './reset-password-controller'
@@ -57,7 +57,7 @@ describe('ResetPasswordController', () => {
     await sut.handle(makeFakeRequest())
     expect(validatorSpy).toHaveBeenCalledWith(makeFakeRequest())
   })
-  test('should return 401 if validator return a error', async () => {
+  test('should return 400 if validator return a error', async () => {
     const { sut, validatorStub } = makeSut()
     jest.spyOn(validatorStub, 'validation').mockReturnValueOnce(new MissingParamError('any_field'))
     const response = await sut.handle(makeFakeRequest())
@@ -68,5 +68,11 @@ describe('ResetPasswordController', () => {
     const resetSpy = jest.spyOn(resetPasswordStub, 'resetPassword')
     await sut.handle(makeFakeRequest())
     expect(resetSpy).toHaveBeenCalledWith('any_token', 'any_password')
+  })
+  test('should return 401 if  resetPassword return null', async () => {
+    const { sut, resetPasswordStub } = makeSut()
+    jest.spyOn(resetPasswordStub, 'resetPassword').mockReturnValueOnce(Promise.resolve(null))
+    const response = await sut.handle(makeFakeRequest())
+    expect(response).toEqual(unauthorized())
   })
 })
