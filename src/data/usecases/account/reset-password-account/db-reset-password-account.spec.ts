@@ -103,4 +103,9 @@ describe('DbResetPasswordAccount', () => {
     const promise = sut.resetPassword('any_token', 'any_password')
     await expect(promise).rejects.toThrow()
   })
+  test('should return new hashed password on succeeds', async () => {
+    const { sut } = makeSut()
+    const response = await sut.resetPassword('any_token', 'any_email')
+    expect(response).toEqual({ password: 'hashed_password' })
+  })
 })
