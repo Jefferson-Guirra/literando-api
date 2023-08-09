@@ -124,6 +124,23 @@ describe('AccountMongoRepository', () => {
     expect(account?.email).toBe('any_email@mail.com')
     expect(account?.accessToken).toBeFalsy()
   })
+  test('should update  password if resetPassword success', async () => {
+    const sut = makeSut()
+    const result = await accountCollection.insertOne({
+      username: 'any_username',
+      email: 'any_email@mail.com',
+      password: 'any_password',
+      accessToken: 'any_token'
+    })
+    const account = await sut.resetPassword('any_email@mail.com', 'random_password')
+    const newAccount = await accountCollection.findOne({ _id: result.insertedId })
+    expect(newAccount?.password).toEqual('random_password')
+    expect(account?.id).toBeTruthy()
+    expect(account?.username).toEqual('any_username')
+    expect(account?.email).toEqual('any_email@mail.com')
+    expect(account?.password).toEqual('random_password')
+    expect(account?.accessToken).toEqual('any_token')
+  })
 })
 
 export {}
