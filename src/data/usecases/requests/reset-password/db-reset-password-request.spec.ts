@@ -5,7 +5,7 @@ import { AddResetPasswordRequestRepository } from '../../../protocols/db/reset-p
 import { LoadResetPasswordRequestByEmailRepository, ResetPasswordRequestModel } from '../../../protocols/db/reset-password-request/load-reset-password-request-by-email-repository'
 import { UpdateResetPasswordTokenRepository } from '../../../protocols/db/reset-password-request/update-reset-password-token-repository'
 import { SendResetPasswordMessage } from '../../../protocols/email/send-reset-password-message'
-import { DbResetPasswordEmail } from './db-reset-password-email'
+import { DbResetPasswordRequest } from './db-reset-password-request'
 
 const makeRequestStub = (): ResetPasswordRequestModel => ({
   id: 'any_id',
@@ -75,7 +75,7 @@ interface SUtTypes {
   encrypterStub: Encrypter
   sendMessageStub: SendResetPasswordMessage
   loadAccountStub: LoadAccountByEmailRepository
-  sut: DbResetPasswordEmail
+  sut: DbResetPasswordRequest
 }
 
 const makeSut = (): SUtTypes => {
@@ -85,7 +85,7 @@ const makeSut = (): SUtTypes => {
   const encrypterStub = makeEncrypterStub()
   const sendMessageStub = makeSendMessageStub()
   const loadAccountStub = makeLoadAccountStub()
-  const sut = new DbResetPasswordEmail(
+  const sut = new DbResetPasswordRequest(
     loadAccountStub, sendMessageStub,
     encrypterStub,
     getResetPasswordRequestStub,

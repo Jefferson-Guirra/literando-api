@@ -6,7 +6,7 @@ import { LoadResetPasswordRequestByEmailRepository } from '../../../protocols/db
 import { UpdateResetPasswordTokenRepository } from '../../../protocols/db/reset-password-request/update-reset-password-token-repository'
 import { SendResetPasswordMessage } from '../../../protocols/email/send-reset-password-message'
 
-export class DbResetPasswordEmail implements ResetPasswordEmail {
+export class DbResetPasswordRequest implements ResetPasswordEmail {
   constructor (
     private readonly loadAccount: LoadAccountByEmailRepository,
     private readonly sendMessage: SendResetPasswordMessage,
