@@ -1,4 +1,4 @@
-import { DbVerifyResetPasswordToken } from '../../../../data/usecases/email/verify-reset-password-token/db-verify-reset-password-token'
+import { DbVerifyResetPasswordToken } from '../../../../data/usecases/requests/verify-reset-password-token/db-verify-reset-password-token'
 import { ResetPasswordAccountRequestRepository } from '../../../../infra/db/email/reset-password-account-request-repository'
 import { VerifyResetPasswordTokenController } from '../../../../presentation/controllers/email/verify-reset-password-token/verify-reset-password-token-controller'
 import { Controller } from '../../../../presentation/protocols/controller'

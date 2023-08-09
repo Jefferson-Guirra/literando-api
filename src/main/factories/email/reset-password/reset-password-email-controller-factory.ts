@@ -1,4 +1,4 @@
-import { DbResetPasswordEmail } from '../../../../data/usecases/email/reset-password/db-reset-password-email'
+import { DbResetPasswordEmail } from '../../../../data/usecases/requests/reset-password/db-reset-password-email'
 import { JwtAdapter } from '../../../../infra/criptography/jwt-adapter/jwt-adapter'
 import { AccountMongoRepository } from '../../../../infra/db/account/account-mongo-repository'
 import { ResetPasswordAccountRequestRepository } from '../../../../infra/db/email/reset-password-account-request-repository'
