@@ -1,11 +1,13 @@
 import { ResetPasswordAccount, ResetPasswordModel } from '../../../../domain/usecases/account/reset-password-account'
 import { Hasher } from '../../../protocols/criptography/hasher'
+import { ResetPasswordAccountRepository } from '../../../protocols/db/account/reset-password-account-repository'
 import { LoadResetPasswordRequestByAccessTokenRepository } from '../../../protocols/db/email/load-reset-password-request-by-access-token-repository'
 
 export class DbResetPasswordAccount implements ResetPasswordAccount {
   constructor (
     private readonly loadRequest: LoadResetPasswordRequestByAccessTokenRepository,
-    private readonly hasher: Hasher
+    private readonly hasher: Hasher,
+    private readonly resetPasswordAccount: ResetPasswordAccountRepository
   ) {}
 
   async resetPassword (accessToken: string, password: string): Promise<ResetPasswordModel | null> {
@@ -13,7 +15,9 @@ export class DbResetPasswordAccount implements ResetPasswordAccount {
     if (!request) {
       return null
     }
-    await this.hasher.hash(password)
+    const { email } = request
+    const hashedPassword = await this.hasher.hash(password)
+    await this.resetPasswordAccount.resetPassword(email, hashedPassword)
     return { password: 'hashed_password' }
   }
 }
