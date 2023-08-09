@@ -79,7 +79,6 @@ describe('BookListMongoRepository', () => {
   test('should return book if addBook success', async () => {
     const sut = makeSut()
     const book = await sut.addBook(makeFakeRequest(), 'any_user_id')
-    console.log(book?.pageCount)
     expect(book).toBeTruthy()
     expect(book?.title).toBe('any_title')
     expect(book?.description).toBe('any_description')

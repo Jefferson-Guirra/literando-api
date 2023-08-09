@@ -8,7 +8,6 @@ export class GetOauthToken implements GetOauthAccessToken {
     oauthClient.setCredentials({
       refresh_token: refreshToken
     })
-    console.error(refreshToken)
     return await new Promise((resolve, reject) => {
       oauthClient.getAccessToken((err, token) => {
         if (err) {
