@@ -36,4 +36,10 @@ describe('DbResetPasswordAccount', () => {
     await sut.resetPassword('any_token', 'any_password')
     expect(loadRequestSpy).toHaveBeenCalledWith('any_token')
   })
+  test('should return null if loadRequest return null', async () => {
+    const { sut, loadRequestStub } = makeSut()
+    jest.spyOn(loadRequestStub, 'loadRequestByAccessToken').mockReturnValueOnce(Promise.resolve(null))
+    const response = await sut.resetPassword('any_token', 'any_password')
+    expect(response).toBeFalsy()
+  })
 })
