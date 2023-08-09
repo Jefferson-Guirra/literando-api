@@ -67,4 +67,10 @@ describe('DbResetPasswordAccount', () => {
     await sut.resetPassword('any_token', 'any_password')
     expect(hashSpy).toHaveBeenCalledWith('any_password')
   })
+  test('should return throw if hasher fails', async () => {
+    const { sut, hasherStub } = makeSut()
+    jest.spyOn(hasherStub, 'hash').mockReturnValueOnce(Promise.reject(new Error('')))
+    const promise = sut.resetPassword('any_token', 'any_password')
+    await expect(promise).rejects.toThrow()
+  })
 })
