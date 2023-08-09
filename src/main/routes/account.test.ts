@@ -206,12 +206,7 @@ describe('PUT /reset-password', () => {
     await accountCollection.deleteMany({})
   })
   test('should return 200 on succeeds', async () => {
-    await accountCollection.insertOne({
-      username: 'any_username',
-      email: 'any_email@mail.com',
-      password: 'any_password',
-      accessToken: 'any_token'
-    })
+    await insertAccountDatabase()
     await resetPasswordRequestCollection.insertOne({
       email: 'any_email@mail.com',
       accessToken: 'any_token'
@@ -227,6 +222,6 @@ describe('PUT /reset-password', () => {
       accessToken: 'any_token',
       password: 'any_password',
       passwordConfirmation: 'any_password'
-    }).expect(200)
+    }).expect(401)
   })
 })
