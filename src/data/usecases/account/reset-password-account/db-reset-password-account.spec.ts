@@ -120,6 +120,12 @@ describe('DbResetPasswordAccount', () => {
     await sut.resetPassword('any_token', 'any_password')
     expect(destroySpy).toHaveBeenCalledWith('any_token')
   })
+  test('should return throw if destroyToken fails', async () => {
+    const { sut, destroyResetRequestStub } = makeSut()
+    jest.spyOn(destroyResetRequestStub, 'destroyToken').mockReturnValueOnce(Promise.reject(new Error('')))
+    const promise = sut.resetPassword('any_token', 'any_password')
+    await expect(promise).rejects.toThrow()
+  })
   test('should return new hashed password on succeeds', async () => {
     const { sut } = makeSut()
     const response = await sut.resetPassword('any_token', 'any_email')
