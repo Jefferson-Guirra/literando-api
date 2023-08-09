@@ -1,3 +1,5 @@
+import { MissingParamError } from '../../../errors/missing-params-error'
+import { badRequest } from '../../../helpers/http/http'
 import { HttpRequest } from '../../../protocols/http'
 import { Validation } from '../../../protocols/validate'
 import { ResetPasswordController } from './reset-password-controller'
@@ -39,5 +41,11 @@ describe('ResetPasswordController', () => {
     const validatorSpy = jest.spyOn(validatorStub, 'validation')
     await sut.handle(makeFakeRequest())
     expect(validatorSpy).toHaveBeenCalledWith(makeFakeRequest())
+  })
+  test('should return 401 if validator return a error', async () => {
+    const { sut, validatorStub } = makeSut()
+    jest.spyOn(validatorStub, 'validation').mockReturnValueOnce(new MissingParamError('any_field'))
+    const response = await sut.handle(makeFakeRequest())
+    expect(response).toEqual(badRequest(new MissingParamError('any_field')))
   })
 })
