@@ -126,6 +126,11 @@ describe('AccountMongoRepository', () => {
     expect(account?.password).toEqual('random_password')
     expect(account?.accessToken).toEqual('any_token')
   })
+  test('should return null if resetPassword return null', async () => {
+    const sut = makeSut()
+    const account = await sut.resetPassword('any_email@mail.com', 'random_password')
+    expect(account).toBeFalsy()
+  })
 })
 
 export {}
