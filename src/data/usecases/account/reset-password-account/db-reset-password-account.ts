@@ -17,7 +17,7 @@ export class DbResetPasswordAccount implements ResetPasswordAccount {
     }
     const { email } = request
     const hashedPassword = await this.hasher.hash(password)
-    await this.resetPasswordAccount.resetPassword(email, hashedPassword)
-    return { password: 'hashed_password' }
+    const account = await this.resetPasswordAccount.resetPassword(email, hashedPassword)
+    return account && { password: 'hashed_password' }
   }
 }
