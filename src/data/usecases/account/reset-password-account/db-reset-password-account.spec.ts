@@ -1,3 +1,4 @@
+import { Hasher } from '../../../protocols/criptography/hasher'
 import { LoadResetPasswordRequestByAccessTokenRepository } from '../../../protocols/db/email/load-reset-password-request-by-access-token-repository'
 import { ResetPasswordRequestModel } from '../../../protocols/db/email/load-reset-password-request-by-email-repository'
 import { DbResetPasswordAccount } from './db-reset-password-account'
@@ -15,15 +16,27 @@ const makeLoadRequestStub = (): LoadResetPasswordRequestByAccessTokenRepository 
   return new LoadResetPasswordRequestByAccessTokenStub()
 }
 
+const makeHasherStub = (): Hasher => {
+  class HasherStub implements Hasher {
+    async hash (value: string): Promise<string> {
+      return await Promise.resolve('hashed_password')
+    }
+  }
+  return new HasherStub()
+}
+
 interface SutTypes {
+  hasherStub: Hasher
   loadRequestStub: LoadResetPasswordRequestByAccessTokenRepository
   sut: DbResetPasswordAccount
 }
 
 const makeSut = (): SutTypes => {
+  const hasherStub = makeHasherStub()
   const loadRequestStub = makeLoadRequestStub()
-  const sut = new DbResetPasswordAccount(loadRequestStub)
+  const sut = new DbResetPasswordAccount(loadRequestStub, hasherStub)
   return {
+    hasherStub,
     loadRequestStub,
     sut
   }
@@ -47,5 +60,11 @@ describe('DbResetPasswordAccount', () => {
     jest.spyOn(loadRequestStub, 'loadRequestByAccessToken').mockReturnValueOnce(Promise.reject(new Error('')))
     const promise = sut.resetPassword('any_token', 'any_password')
     await expect(promise).rejects.toThrow()
+  })
+  test('should call hasher with correct value', async () => {
+    const { sut, hasherStub } = makeSut()
+    const hashSpy = jest.spyOn(hasherStub, 'hash')
+    await sut.resetPassword('any_token', 'any_password')
+    expect(hashSpy).toHaveBeenCalledWith('any_password')
   })
 })
