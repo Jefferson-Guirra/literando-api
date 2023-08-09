@@ -12,6 +12,6 @@ export const makeResetPasswordAccountController = (): Controller => {
   const bcryptAdapter = new BcrypterAdapter(salt)
   const accountMongoRepository = new AccountMongoRepository()
   const requestMongoRepository = new ResetPasswordAccountRequestRepository()
-  const dbResetPasswordAccount = new DbResetPasswordAccount(requestMongoRepository, bcryptAdapter, accountMongoRepository)
+  const dbResetPasswordAccount = new DbResetPasswordAccount(requestMongoRepository, bcryptAdapter, accountMongoRepository, requestMongoRepository)
   return new ResetPasswordController(validator, dbResetPasswordAccount)
 }
