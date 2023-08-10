@@ -1,7 +1,7 @@
 import { Hasher } from '../../../protocols/criptography/hasher'
 import { ResetPasswordAccountModel, ResetPasswordAccountRepository } from '../../../protocols/db/account/reset-password-account-repository'
 import { RemoveRequestRepository } from '../../../protocols/db/requests/remove-request-repository'
-import { LoadResetPasswordRequestByAccessTokenRepository } from '../../../protocols/db/requests/load-reset-password-request-by-access-token-repository'
+import { LoadRequestByAccessTokenRepository } from '../../../protocols/db/requests/load-request-by-access-token-repository'
 import { ResetPasswordRequestModel } from '../../../protocols/db/requests/load-reset-password-request-by-email-repository'
 import { DbResetPasswordAccount } from './db-reset-password-account'
 
@@ -12,8 +12,8 @@ const makeDestroyRequestTokenStub = (): RemoveRequestRepository => {
   }
   return new RemoveRequestStub()
 }
-const makeLoadRequestStub = (): LoadResetPasswordRequestByAccessTokenRepository => {
-  class LoadResetPasswordRequestByAccessTokenStub implements LoadResetPasswordRequestByAccessTokenRepository {
+const makeLoadRequestStub = (): LoadRequestByAccessTokenRepository => {
+  class LoadRequestByAccessTokenRepositoryStub implements LoadRequestByAccessTokenRepository {
     async loadRequestByAccessToken (accessToken: string): Promise<ResetPasswordRequestModel | null> {
       return await Promise.resolve({
         id: 'any_id',
@@ -22,7 +22,7 @@ const makeLoadRequestStub = (): LoadResetPasswordRequestByAccessTokenRepository 
       })
     }
   }
-  return new LoadResetPasswordRequestByAccessTokenStub()
+  return new LoadRequestByAccessTokenRepositoryStub()
 }
 const makeResetPasswordAccountRepositoryStub = (): ResetPasswordAccountRepository => {
   class ResetPasswordAccountRepositoryStub implements ResetPasswordAccountRepository {
@@ -52,7 +52,7 @@ interface SutTypes {
   removeRequestStub: RemoveRequestRepository
   resetPasswordAccountRepositoryStub: ResetPasswordAccountRepository
   hasherStub: Hasher
-  loadRequestStub: LoadResetPasswordRequestByAccessTokenRepository
+  loadRequestStub: LoadRequestByAccessTokenRepository
   sut: DbResetPasswordAccount
 }
 

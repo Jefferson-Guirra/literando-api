@@ -1,9 +1,9 @@
-import { LoadResetPasswordRequestByAccessTokenRepository } from '../../../protocols/db/requests/load-reset-password-request-by-access-token-repository'
+import { LoadRequestByAccessTokenRepository } from '../../../protocols/db/requests/load-request-by-access-token-repository'
 import { ResetPasswordRequestModel } from '../../../protocols/db/requests/load-reset-password-request-by-email-repository'
 import { DbVerifyResetPasswordToken } from './db-verify-reset-password-token'
 
-const makeLoadRequestByAccessTokenStub = (): LoadResetPasswordRequestByAccessTokenRepository => {
-  class LoadResetPasswordRequestByAccessTokenRepositoryStub implements LoadResetPasswordRequestByAccessTokenRepository {
+const makeLoadRequestByAccessTokenStub = (): LoadRequestByAccessTokenRepository => {
+  class LoadResetPasswordRequestByAccessTokenRepositoryStub implements LoadRequestByAccessTokenRepository {
     async loadRequestByAccessToken (accessToken: string): Promise<ResetPasswordRequestModel | null> {
       return await Promise.resolve({
         id: 'any_id',
@@ -15,7 +15,7 @@ const makeLoadRequestByAccessTokenStub = (): LoadResetPasswordRequestByAccessTok
   return new LoadResetPasswordRequestByAccessTokenRepositoryStub()
 }
 interface SutTypes {
-  loadRequestByAccessTokenStub: LoadResetPasswordRequestByAccessTokenRepository
+  loadRequestByAccessTokenStub: LoadRequestByAccessTokenRepository
   sut: DbVerifyResetPasswordToken
 }
 

@@ -1,8 +1,8 @@
+import { LoadRequestByAccessTokenRepository } from '../../../protocols/db/requests/load-request-by-access-token-repository'
 import { VerifyResetPasswordToken } from '../../../../domain/usecases/email/verify-reset-password-token'
-import { LoadResetPasswordRequestByAccessTokenRepository } from '../../../protocols/db/requests/load-reset-password-request-by-access-token-repository'
 
 export class DbVerifyResetPasswordToken implements VerifyResetPasswordToken {
-  constructor (private readonly loadRequest: LoadResetPasswordRequestByAccessTokenRepository) {}
+  constructor (private readonly loadRequest: LoadRequestByAccessTokenRepository) {}
   async verifyResetPasswordToken (accessToken: string): Promise<boolean> {
     const request = await this.loadRequest.loadRequestByAccessToken(accessToken)
     return !!request

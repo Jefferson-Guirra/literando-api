@@ -2,11 +2,11 @@ import { ResetPasswordAccount, ResetPasswordModel } from '../../../../domain/use
 import { Hasher } from '../../../protocols/criptography/hasher'
 import { ResetPasswordAccountRepository } from '../../../protocols/db/account/reset-password-account-repository'
 import { RemoveRequestRepository } from '../../../protocols/db/requests/remove-request-repository'
-import { LoadResetPasswordRequestByAccessTokenRepository } from '../../../protocols/db/requests/load-reset-password-request-by-access-token-repository'
+import { LoadRequestByAccessTokenRepository } from '../../../protocols/db/requests/load-request-by-access-token-repository'
 
 export class DbResetPasswordAccount implements ResetPasswordAccount {
   constructor (
-    private readonly loadRequest: LoadResetPasswordRequestByAccessTokenRepository,
+    private readonly loadRequest: LoadRequestByAccessTokenRepository,
     private readonly hasher: Hasher,
     private readonly resetPasswordAccount: ResetPasswordAccountRepository,
     private readonly destroyRequestToken: RemoveRequestRepository
