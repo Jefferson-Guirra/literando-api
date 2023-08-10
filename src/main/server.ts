@@ -4,7 +4,7 @@ import app from './config/app'
 
 MongoHelper.connect(env.mongoUrl)
   .then(async () => {
-    app.listen(env.port as number, '0.0.0.0', () => {
+    app.listen(Number(env.port), '0.0.0.0', () => {
       console.log('running in http://localhost:8080')
     })
   }).catch(console.error)
