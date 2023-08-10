@@ -3,7 +3,7 @@ import { MissingParamError } from '../../../errors/missing-params-error'
 import { badRequest, ok, serverError, unauthorized } from '../../../helpers/http/http'
 import { HttpRequest } from '../../../protocols/http'
 import { Validation } from '../../../protocols/validate'
-import { ResetPasswordEmailController } from './reset-password-email-controller'
+import { SendResetPasswordRequestController } from './send-reset-password-request-controller'
 
 const makeFakeRequest = (): HttpRequest => {
   return {
@@ -32,12 +32,12 @@ const makeValidationStub = (): Validation => {
 interface SutTypes {
   resetPasswordEmailStub: ResetPasswordEmail
   validatorStub: Validation
-  sut: ResetPasswordEmailController
+  sut: SendResetPasswordRequestController
 }
 const makeSut = (): SutTypes => {
   const resetPasswordEmailStub = makeResetPasswordEmailStub()
   const validatorStub = makeValidationStub()
-  const sut = new ResetPasswordEmailController(validatorStub, resetPasswordEmailStub)
+  const sut = new SendResetPasswordRequestController(validatorStub, resetPasswordEmailStub)
   return {
     resetPasswordEmailStub,
     validatorStub,

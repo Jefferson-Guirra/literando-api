@@ -3,7 +3,7 @@ import { JwtAdapter } from '../../../../infra/criptography/jwt-adapter/jwt-adapt
 import { AccountMongoRepository } from '../../../../infra/db/account/account-mongo-repository'
 import { RequestMongoRepository } from '../../../../infra/db/requests/request-mongo-repository'
 import { NodemailerAdapter } from '../../../../infra/email/nodemailer-adapter/nodemailer-adapter'
-import { ResetPasswordEmailController } from '../../../../presentation/controllers/requests/reset-pasword/reset-password-email-controller'
+import { SendResetPasswordRequestController } from '../../../../presentation/controllers/requests/reset-pasword/send-reset-password-request-controller'
 import { makeResetPasswordEmailValidator } from './reset-password-email-validator-factory'
 import env from '../../../config/env'
 import { Controller } from '../../../../presentation/protocols/controller'
@@ -35,6 +35,6 @@ export const makeResetPasswordEmailController = (): Controller => {
     resetPasswordAccountRepository,
     resetPasswordAccountRepository)
   const logMongoRepository = new LogMongoRepository()
-  const resetPasswordEmailController = new ResetPasswordEmailController(validator, dbResetPasswordEmail)
+  const resetPasswordEmailController = new SendResetPasswordRequestController(validator, dbResetPasswordEmail)
   return new LogControllerDecorator(resetPasswordEmailController, logMongoRepository)
 }

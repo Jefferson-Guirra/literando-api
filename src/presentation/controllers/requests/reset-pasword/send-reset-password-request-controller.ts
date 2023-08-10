@@ -4,7 +4,7 @@ import { Controller } from '../../../protocols/controller'
 import { HttpRequest, HttpResponse } from '../../../protocols/http'
 import { Validation } from '../../../protocols/validate'
 
-export class ResetPasswordEmailController implements Controller {
+export class SendResetPasswordRequestController implements Controller {
   constructor (
     private readonly validator: Validation,
     private readonly resetPasswordEmail: ResetPasswordEmail
