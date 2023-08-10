@@ -1,8 +1,8 @@
 import { ResetPasswordAccount, ResetPasswordModel } from '../../../../domain/usecases/account/reset-password-account'
 import { Hasher } from '../../../protocols/criptography/hasher'
 import { ResetPasswordAccountRepository } from '../../../protocols/db/account/reset-password-account-repository'
-import { RemoveRequestRepository } from '../../../protocols/db/reset-password-request/remove-request-repository'
-import { LoadResetPasswordRequestByAccessTokenRepository } from '../../../protocols/db/reset-password-request/load-reset-password-request-by-access-token-repository'
+import { RemoveRequestRepository } from '../../../protocols/db/requests/remove-request-repository'
+import { LoadResetPasswordRequestByAccessTokenRepository } from '../../../protocols/db/requests/load-reset-password-request-by-access-token-repository'
 
 export class DbResetPasswordAccount implements ResetPasswordAccount {
   constructor (

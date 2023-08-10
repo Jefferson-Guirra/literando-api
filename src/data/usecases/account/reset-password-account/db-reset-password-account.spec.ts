@@ -1,8 +1,8 @@
 import { Hasher } from '../../../protocols/criptography/hasher'
 import { ResetPasswordAccountModel, ResetPasswordAccountRepository } from '../../../protocols/db/account/reset-password-account-repository'
-import { RemoveRequestRepository } from '../../../protocols/db/reset-password-request/remove-request-repository'
-import { LoadResetPasswordRequestByAccessTokenRepository } from '../../../protocols/db/reset-password-request/load-reset-password-request-by-access-token-repository'
-import { ResetPasswordRequestModel } from '../../../protocols/db/reset-password-request/load-reset-password-request-by-email-repository'
+import { RemoveRequestRepository } from '../../../protocols/db/requests/remove-request-repository'
+import { LoadResetPasswordRequestByAccessTokenRepository } from '../../../protocols/db/requests/load-reset-password-request-by-access-token-repository'
+import { ResetPasswordRequestModel } from '../../../protocols/db/requests/load-reset-password-request-by-email-repository'
 import { DbResetPasswordAccount } from './db-reset-password-account'
 
 const makeDestroyRequestTokenStub = (): RemoveRequestRepository => {

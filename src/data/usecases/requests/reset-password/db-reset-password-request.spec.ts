@@ -1,9 +1,9 @@
 import { AccountModel } from '../../../../domain/models/account/account'
 import { Encrypter } from '../../../protocols/criptography/encrypter'
 import { LoadAccountByEmailRepository } from '../../../protocols/db/account/load-account-by-email-repository'
-import { AddResetPasswordRequestRepository } from '../../../protocols/db/reset-password-request/add-reset-password-request-repository'
-import { LoadResetPasswordRequestByEmailRepository, ResetPasswordRequestModel } from '../../../protocols/db/reset-password-request/load-reset-password-request-by-email-repository'
-import { UpdateResetPasswordTokenRepository } from '../../../protocols/db/reset-password-request/update-reset-password-token-repository'
+import { AddResetPasswordRequestRepository } from '../../../protocols/db/requests/add-reset-password-request-repository'
+import { LoadResetPasswordRequestByEmailRepository, ResetPasswordRequestModel } from '../../../protocols/db/requests/load-reset-password-request-by-email-repository'
+import { UpdateResetPasswordTokenRepository } from '../../../protocols/db/requests/update-reset-password-token-repository'
 import { SendResetPasswordMessage } from '../../../protocols/email/send-reset-password-message'
 import { DbResetPasswordRequest } from './db-reset-password-request'
 
