@@ -1,7 +1,7 @@
 import { DbResetPasswordAccount } from '../../../../data/usecases/account/reset-password-account/db-reset-password-account'
 import { BcrypterAdapter } from '../../../../infra/criptography/bcrypt-adapter.ts/bcrypter-adapter'
 import { AccountMongoRepository } from '../../../../infra/db/account/account-mongo-repository'
-import { ResetPasswordAccountRequestRepository } from '../../../../infra/db/email/reset-password-account-request-repository'
+import { ResetPasswordAccountRequestRepository } from '../../../../infra/db/requests/reset-password-account-request-repository'
 import { ResetPasswordController } from '../../../../presentation/controllers/account/reset-password/reset-password-controller'
 import { Controller } from '../../../../presentation/protocols/controller'
 import { makeResetPasswordAccountValidator } from './reset-password-account--validator'

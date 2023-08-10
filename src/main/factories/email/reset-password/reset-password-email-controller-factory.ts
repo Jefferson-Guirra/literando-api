@@ -1,7 +1,7 @@
 import { DbResetPasswordRequest } from '../../../../data/usecases/requests/reset-password/db-reset-password-request'
 import { JwtAdapter } from '../../../../infra/criptography/jwt-adapter/jwt-adapter'
 import { AccountMongoRepository } from '../../../../infra/db/account/account-mongo-repository'
-import { ResetPasswordAccountRequestRepository } from '../../../../infra/db/email/reset-password-account-request-repository'
+import { ResetPasswordAccountRequestRepository } from '../../../../infra/db/requests/reset-password-account-request-repository'
 import { NodemailerAdapter } from '../../../../infra/email/nodemailer-adapter/nodemailer-adapter'
 import { ResetPasswordEmailController } from '../../../../presentation/controllers/requests/reset-pasword/reset-password-email-controller'
 import { makeResetPasswordEmailValidator } from './reset-password-email-validator-factory'
