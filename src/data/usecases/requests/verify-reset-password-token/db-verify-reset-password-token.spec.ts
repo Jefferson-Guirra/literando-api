@@ -1,5 +1,5 @@
 import { LoadRequestByAccessTokenRepository } from '../../../protocols/db/requests/load-request-by-access-token-repository'
-import { ResetPasswordRequestModel } from '../../../protocols/db/requests/load-reset-password-request-by-email-repository'
+import { ResetPasswordRequestModel } from '../../../protocols/db/requests/load-request-by-email-repository'
 import { DbVerifyResetPasswordToken } from './db-verify-reset-password-token'
 
 const makeLoadRequestByAccessTokenStub = (): LoadRequestByAccessTokenRepository => {

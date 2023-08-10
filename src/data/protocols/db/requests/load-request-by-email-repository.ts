@@ -4,6 +4,6 @@ export interface ResetPasswordRequestModel {
   accessToken: string
 }
 
-export interface LoadResetPasswordRequestByEmailRepository {
+export interface LoadRequestByEmailRepository {
   loadRequestByEmail: (email: string) => Promise<ResetPasswordRequestModel | null>
 }
