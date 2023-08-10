@@ -4,7 +4,7 @@ import { adaptRoute } from '../adapters/express/express-route-adapter'
 import { makeVerifyResetPasswordTokenController } from '../factories/email/verify-reset-password-token/verify-reset-password-token-controller-factory'
 
 const requestRoutes = (router: Router): void => {
-  router.post('/send-reset-password-email-message', adaptRoute(makeResetPasswordEmailController()))
+  router.post('/reset-password-request', adaptRoute(makeResetPasswordEmailController()))
   router.post('/verify-request', adaptRoute(makeVerifyResetPasswordTokenController()))
 }
 

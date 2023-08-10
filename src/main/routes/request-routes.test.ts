@@ -22,10 +22,10 @@ describe('POST /send-reset-password-message', () => {
       email: 'any_email@mail.com',
       password: 'any_password'
     })
-    await request(app).post('/api/send-reset-password-email-message').send({ email: 'any_email@mail.com' }).expect(200)
+    await request(app).post('/api/reset-password-request').send({ email: 'any_email@mail.com' }).expect(200)
   })
   test('should  return 401 if fails', async () => {
-    await request(app).post('/api/send-reset-password-email-message').send({ email: 'any_email@mail.com' }).expect(401)
+    await request(app).post('/api/reset-password-request').send({ email: 'any_email@mail.com' }).expect(401)
   })
 })
 
