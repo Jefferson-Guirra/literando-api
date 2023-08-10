@@ -2,13 +2,13 @@ import { AddRequestRepository } from '../../../data/protocols/db/requests/add-re
 import { RemoveRequestRepository } from '../../../data/protocols/db/requests/remove-request-repository'
 import { LoadRequestByAccessTokenRepository } from '../../../data/protocols/db/requests/load-request-by-access-token-repository'
 import { LoadRequestByEmailRepository, ResetPasswordRequestModel } from '../../../data/protocols/db/requests/load-request-by-email-repository'
-import { UpdateResetPasswordTokenRepository } from '../../../data/protocols/db/requests/update-reset-password-token-repository'
+import { UpdateAccessTokenRequestRepository } from '../../../data/protocols/db/requests/update-access-token-repository'
 import { MongoHelper } from '../helpers/mongo-helper'
 
 export class ResetPasswordAccountRequestRepository implements
 AddRequestRepository,
 LoadRequestByEmailRepository,
-UpdateResetPasswordTokenRepository,
+UpdateAccessTokenRequestRepository,
 LoadRequestByAccessTokenRepository,
 RemoveRequestRepository {
   async add (email: string, accessToken: string): Promise<ResetPasswordRequestModel | null> {
