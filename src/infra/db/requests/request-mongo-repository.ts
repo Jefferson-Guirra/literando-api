@@ -5,7 +5,7 @@ import { LoadRequestByEmailRepository, ResetPasswordRequestModel } from '../../.
 import { UpdateAccessTokenRequestRepository } from '../../../data/protocols/db/requests/update-access-token-repository'
 import { MongoHelper } from '../helpers/mongo-helper'
 
-export class ResetPasswordAccountRequestRepository implements
+export class RequestMongoRepository implements
 AddRequestRepository,
 LoadRequestByEmailRepository,
 UpdateAccessTokenRequestRepository,

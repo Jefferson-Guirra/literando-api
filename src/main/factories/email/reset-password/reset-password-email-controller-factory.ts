@@ -1,7 +1,7 @@
 import { DbResetPasswordRequest } from '../../../../data/usecases/requests/reset-password/db-reset-password-request'
 import { JwtAdapter } from '../../../../infra/criptography/jwt-adapter/jwt-adapter'
 import { AccountMongoRepository } from '../../../../infra/db/account/account-mongo-repository'
-import { ResetPasswordAccountRequestRepository } from '../../../../infra/db/requests/reset-password-account-request-repository'
+import { RequestMongoRepository } from '../../../../infra/db/requests/request-mongo-repository'
 import { NodemailerAdapter } from '../../../../infra/email/nodemailer-adapter/nodemailer-adapter'
 import { ResetPasswordEmailController } from '../../../../presentation/controllers/requests/reset-pasword/reset-password-email-controller'
 import { makeResetPasswordEmailValidator } from './reset-password-email-validator-factory'
@@ -25,7 +25,7 @@ export const makeResetPasswordEmailController = (): Controller => {
   const jwtAdapter = new JwtAdapter(env.jwtSecret)
   const getOAuthToken = new GetOauthToken()
   const transporter = new NodemailerGmailTransporter(gmailData, getOAuthToken)
-  const resetPasswordAccountRepository = new ResetPasswordAccountRequestRepository()
+  const resetPasswordAccountRepository = new RequestMongoRepository()
   const nodemailerAdapter = new NodemailerAdapter(env.serviceEmail, env.appUrl, transporter)
   const dbResetPasswordEmail = new DbResetPasswordRequest(
     accountMongoRepository,

@@ -1,11 +1,11 @@
 import { Collection } from 'mongodb'
 import { MongoHelper } from '../helpers/mongo-helper'
-import { ResetPasswordAccountRequestRepository } from './reset-password-account-request-repository'
+import { RequestMongoRepository } from './request-mongo-repository'
 
 let resetPasswordAccountsCollection: Collection
-const makeSut = (): ResetPasswordAccountRequestRepository => new ResetPasswordAccountRequestRepository()
+const makeSut = (): RequestMongoRepository => new RequestMongoRepository()
 
-describe('ResetPasswordAccountRequestRepository', () => {
+describe('RequestMongoRepository', () => {
   beforeAll(async () => {
     await MongoHelper.connect(process.env.MONGO_URL as string)
   })
