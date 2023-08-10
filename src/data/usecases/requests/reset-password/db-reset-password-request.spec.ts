@@ -1,7 +1,7 @@
 import { AccountModel } from '../../../../domain/models/account/account'
 import { Encrypter } from '../../../protocols/criptography/encrypter'
 import { LoadAccountByEmailRepository } from '../../../protocols/db/account/load-account-by-email-repository'
-import { AddResetPasswordRequestRepository } from '../../../protocols/db/requests/add-reset-password-request-repository'
+import { AddRequestRepository } from '../../../protocols/db/requests/add-request-repository'
 import { LoadResetPasswordRequestByEmailRepository, ResetPasswordRequestModel } from '../../../protocols/db/requests/load-reset-password-request-by-email-repository'
 import { UpdateResetPasswordTokenRepository } from '../../../protocols/db/requests/update-reset-password-token-repository'
 import { SendResetPasswordMessage } from '../../../protocols/email/send-reset-password-message'
@@ -13,8 +13,8 @@ const makeRequestStub = (): ResetPasswordRequestModel => ({
   accessToken: 'any_token'
 })
 
-const makeAddRequestStub = (): AddResetPasswordRequestRepository => {
-  class AddResetPasswordRequestRepositoryStub implements AddResetPasswordRequestRepository {
+const makeAddRequestStub = (): AddRequestRepository => {
+  class AddResetPasswordRequestRepositoryStub implements AddRequestRepository {
     async add (email: string, accessToken: string): Promise<ResetPasswordRequestModel | null> {
       return await Promise.resolve(makeRequestStub())
     }
@@ -69,7 +69,7 @@ const makeLoadAccountStub = (): LoadAccountByEmailRepository => {
   return new LoadAccountByEmailRepositoryStub()
 }
 interface SUtTypes {
-  addResetPasswordRequestStub: AddResetPasswordRequestRepository
+  addResetPasswordRequestStub: AddRequestRepository
   updateResetPasswordTokenStub: UpdateResetPasswordTokenRepository
   getResetPasswordRequestStub: LoadResetPasswordRequestByEmailRepository
   encrypterStub: Encrypter
