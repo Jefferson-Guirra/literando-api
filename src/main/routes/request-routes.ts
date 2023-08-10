@@ -5,7 +5,7 @@ import { makeVerifyResetPasswordTokenController } from '../factories/email/verif
 
 const requestRoutes = (router: Router): void => {
   router.post('/send-reset-password-email-message', adaptRoute(makeResetPasswordEmailController()))
-  router.post('/verify-reset-password-token', adaptRoute(makeVerifyResetPasswordTokenController()))
+  router.post('/verify-request', adaptRoute(makeVerifyResetPasswordTokenController()))
 }
 
 export default requestRoutes

@@ -41,10 +41,10 @@ describe('POST /verify-reset-password-token', () => {
     await MongoHelper.disconnect()
   })
   test('should return 401 if verify fails', async () => {
-    await request(app).post('/api/verify-reset-password-token').send({ accessToken: 'any_token' }).expect(401)
+    await request(app).post('/api/verify-request').send({ accessToken: 'any_token' }).expect(401)
   })
   test('should return 200 on succeeds', async () => {
     await requestsCollection.insertOne({ email: 'any_email@mail.com', accessToken: 'any_token' })
-    await request(app).post('/api/verify-reset-password-token').send({ accessToken: 'any_token' }).expect(200)
+    await request(app).post('/api/verify-request').send({ accessToken: 'any_token' }).expect(200)
   })
 })
