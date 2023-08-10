@@ -5,6 +5,6 @@ import app from './config/app'
 MongoHelper.connect(env.mongoUrl)
   .then(async () => {
     app.listen(Number(env.port), '0.0.0.0', () => {
-      console.log('running in http://localhost:8080')
+      console.log('running in ' + env.serverUrl)
     })
   }).catch(console.error)
