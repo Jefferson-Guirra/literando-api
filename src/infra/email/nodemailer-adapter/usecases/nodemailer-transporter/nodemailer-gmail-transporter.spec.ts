@@ -71,7 +71,8 @@ describe('NodemailerGmailTransporter', () => {
       clientId: 'any_id',
       clientSecret: 'any_key',
       refreshToken: 'any_token',
-      accessToken: 'any_access_token'
+      accessToken: 'any_access_token',
+      expires: 3600
     }
     const createSPy = jest.spyOn(nodemailer, 'createTransport')
     await sut.active(makeResetPasswordMessageStub())

@@ -17,11 +17,12 @@ export class NodemailerGmailTransporter implements NodemailerTransporter {
     const { accessToken } = await this.getAccessToken.getToken(this.gmail.clientId, this.gmail.clientSecret, this.gmail.refreshToken)
     const auth: SMTPConnection.AuthenticationTypeOAuth2 = {
       type: 'OAuth2',
+      accessToken,
       user: this.gmail.serviceEmail,
       clientId: this.gmail.clientId,
       clientSecret: this.gmail.clientSecret,
       refreshToken: this.gmail.refreshToken,
-      accessToken
+      expires: 3600
     }
     const transport = nodemailer.createTransport({
       service: 'gmail',
