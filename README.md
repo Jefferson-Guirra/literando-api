@@ -42,6 +42,7 @@ para consegui-los siga as etapas <a href="https://www.freecodecamp.org/news/use-
 
 
 ```
+
 APP_URL: "uURL_APLICATIVO_INTEGRAÇÃO"
 JWT_SECRET="SEGREDO_JWT_TOKEN"
 GOOGLE_CLIENT_ID: "GOOGLE_CLOUD_API_CLIENT_ID"
