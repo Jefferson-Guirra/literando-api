@@ -3,7 +3,7 @@
 Api criada para o projeto <a href="https://github.com/Jefferson-Guirra/e-commerce"> Literando.</a>
 
 
-### 🚀 Instalando
+## 🚀 Instalando
 
 Para a instalação primeiro faça o fork desse repositorio e execute os seguintes comandos: 
 
@@ -25,7 +25,7 @@ Para iniciar o servidor use o seguinte comando :
 
 ```
 npm start
-``
+```
 
 
 
