@@ -49,8 +49,8 @@ npm start
 
 ### Para implementação correta é necessário criar na raiz do projeto um arquivo .env e setar as seguintes variáveis:
 
-Obs: para serviço de envio de email foi utilizado a biblioteca nodemailer em conjunto com Gmail, para que tudo funcione é necessário tokens de autorização do gmail,
-para consegui-los siga as etapas <a href="https://www.freecodecamp.org/news/use-nodemailer-to-send-emails-from-your-node-js-server/"> aqui </a> e <a href="https://www.freecodecamp.org/news/use-nodemailer-to-send-emails-from-your-node-js-server/"> aqui.</a>
+Obs: Na função envio de email foi utilizado a biblioteca nodemailer em conjunto com Gmail, para que tudo funcione é necessário tokens de autorização do gmail,
+consiga os tokens <a href="https://www.freecodecamp.org/news/use-nodemailer-to-send-emails-from-your-node-js-server/"> aqui </a> e <a href="https://www.freecodecamp.org/news/use-nodemailer-to-send-emails-from-your-node-js-server/"> aqui.</a>
 
 
 ```
