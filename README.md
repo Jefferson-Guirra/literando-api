@@ -63,4 +63,4 @@ port: "NUMERO_DA_PORTA"
 ```
 
 ### Obs: Na função envio de email foi utilizado a biblioteca nodemailer em conjunto com Gmail, para que tudo funcione é necessário tokens de autorização do gmail,
-siga as etapas <a href="https://www.freecodecamp.org/news/use-nodemailer-to-send-emails-from-your-node-js-server/"> aqui </a> e <a href="https://www.freecodecamp.org/news/use-nodemailer-to-send-emails-from-your-node-js-server/"> aqui</a> para conseguir.
+### siga as etapas <a href="https://www.freecodecamp.org/news/use-nodemailer-to-send-emails-from-your-node-js-server/"> aqui </a> e <a href="https://www.freecodecamp.org/news/use-nodemailer-to-send-emails-from-your-node-js-server/"> aqui</a> para conseguir.
