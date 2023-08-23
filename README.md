@@ -1,4 +1,5 @@
-# 🗺 literando-api
+# 📚 literando-api
+
 ![Static Badge](https://img.shields.io/language/:typescript)
 
 
