@@ -1,7 +1,8 @@
 # 📚 literando-api
 
 ![Static Badge](https://img.shields.io/badge/language-typescript-blue)
-![Static Badge](https://img.shields.io/badge/libs-nodemailer-greenbcrypt)
+![Static Badge](https://img.shields.io/badge/libs-nodemailer-green)
+![Static Badge](https://img.shields.io/badge/bcrypt-black)
 
 
 
