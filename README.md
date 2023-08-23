@@ -1,4 +1,6 @@
 # 🗺 literando-api
+![Static Badge](https://img.shields.io/language/:typescript)
+
 
 > Api criada para o projeto <a href="https://github.com/Jefferson-Guirra/e-commerce"> Literando.</a>
 
