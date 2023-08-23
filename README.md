@@ -12,7 +12,7 @@
 
 ## 🚀 Instalando
 
-Para a instalação primeiro faça o fork desse repositorio e execute os seguintes comandos: 
+Para a instalação primeiro faça o fork desse repositório e execute os seguintes comandos: 
 
 Linux e Windows
 
@@ -40,11 +40,11 @@ npm start
 
 <br>
 
-## Variaveis de ambiente:
+## Variáveis de ambiente:
 
-### Para implementação correta é necessario criar na raiz do projeto um arquivo .env e setar as seguintes variaveis:
+### Para implementação correta é necessário criar na raiz do projeto um arquivo .env e setar as seguintes variáveis:
 
-Obs: para serviço de envio de email foi utilizado a biblioteca nodemailer em conjunto com Gmail, para que tudo funcione é necessario tokens de autorização do gmail,
+Obs: para serviço de envio de email foi utilizado a biblioteca nodemailer em conjunto com Gmail, para que tudo funcione é necessário tokens de autorização do gmail,
 para consegui-los siga as etapas <a href="https://www.freecodecamp.org/news/use-nodemailer-to-send-emails-from-your-node-js-server/"> aqui </a> e <a href="https://www.freecodecamp.org/news/use-nodemailer-to-send-emails-from-your-node-js-server/"> aqui.</a>
 
 
